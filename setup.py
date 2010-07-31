@@ -18,12 +18,8 @@ import djcelery_email as distmeta
 class RunTests(Command):
     description = "Run the django test suite from the tests dir."
     user_options = []
-    extra_env = {}
 
     def run(self):
-        for env_name, env_value in self.extra_env.items():
-            os.environ[env_name] = str(env_value)
-
         this_dir = os.getcwd()
         testproj_dir = os.path.join(this_dir, "test_project")
         os.chdir(testproj_dir)
