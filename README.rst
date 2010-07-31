@@ -16,7 +16,7 @@ To enable ``django-celery-email`` for your project you need to add ``djcelery_em
 
     INSTALLED_APPS += ("djcelery_email",)
 
-You must then set ``django-celery-email`` as your ``EMAIL_BACKEND``.
+You must then set ``django-celery-email`` as your ``EMAIL_BACKEND``::
 
     EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 
