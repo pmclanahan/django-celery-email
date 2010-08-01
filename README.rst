@@ -28,6 +28,18 @@ procedure will most likely be to get your email working using only Django, then
 change ``EMAIL_BACKEND`` to ``CELERY_EMAIL_BACKEND``, and then add the new
 ``EMAIL_BACKEND`` setting from above.
 
+If you need to set any of the settings (attributes) you'd normally be able to set on a 
+`Celery Task`_ class had you written it yourself, you may specify them in a ``dict``
+in the ``CELERY_EMAIL_TASK_CONFIG`` setting::
+
+    CELERY_EMAIL_TASK_CONFIG = {
+        'queue' : 'email',
+        'rate_limit' : '50/m',
+        ...
+    }
+
 After this setup is complete, and you have a working Celery install, sending
 email will work exactly like it did before, except that the sending will be
 handled by your Celery workers.
+
+.. _`Celery Task`: http://celeryq.org/docs/reference/celery.task.base.html#defining-tasks-celery-task-base

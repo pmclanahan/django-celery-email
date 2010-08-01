@@ -1,5 +1,8 @@
+from django.conf import settings
 from django.core import mail
 from django.test import TestCase
+
+from djcelery_email.tasks import SendEmailTask
 
 
 class DjangoCeleryEmailTests(TestCase):
@@ -19,3 +22,8 @@ class DjangoCeleryEmailTests(TestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].subject, 'mass 1')
         self.assertEqual(mail.outbox[1].subject, 'mass 2')
+    
+    def test_setting_extra_configs(self):
+        self.assertEqual(SendEmailTask.queue, 'django_email')
+        self.assertEqual(SendEmailTask.delivery_mode, 1)
+        self.assertEqual(SendEmailTask.rate_limit, '50/m')

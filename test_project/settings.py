@@ -27,3 +27,9 @@ INSTALLED_APPS = (
 CELERY_ALWAYS_EAGER = True
 CELERY_EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
+# for tests
+CELERY_EMAIL_TASK_CONFIG = {
+    'queue' : 'django_email',
+    'delivery_mode' : 1, # non persistent
+    'rate_limit' : '50/m', # 50 emails per minute
+}
