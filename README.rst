@@ -42,4 +42,4 @@ After this setup is complete, and you have a working Celery install, sending
 email will work exactly like it did before, except that the sending will be
 handled by your Celery workers.
 
-.. _`Celery Task`: http://celeryq.org/docs/reference/celery.task.base.html#defining-tasks-celery-task-base
+.. _`Celery Task`: http://celery.readthedocs.org/en/latest/userguide/tasks.html#basics
