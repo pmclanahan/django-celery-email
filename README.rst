@@ -8,6 +8,14 @@ of the messages.
 .. _`Celery`: http://celeryproject.org/
 .. _`Django`: http://www.djangoproject.org/
 
+.. warning::
+	
+	This version of ``django-celery-email`` is NOT compatible with versions
+	of Celery prior to 2.2.0. If you need to use Celery 2.0.x or 2.1.x, please
+	use `django-celery-email 0.1.1`_.
+
+.. _`django-celery-email 0.1.1`: http://pypi.python.org/pypi/django-celery-email/0.1.1/
+
 Using django-celery-email
 =========================
 
