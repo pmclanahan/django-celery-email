@@ -8,6 +8,7 @@ CONFIG = getattr(settings, 'CELERY_EMAIL_TASK_CONFIG', {})
 BACKEND = getattr(settings, 'CELERY_EMAIL_BACKEND',
                   'django.core.mail.backends.smtp.EmailBackend')
 TASK_CONFIG = {
+    'name': 'djcelery_email_send',
     'ignore_result': True,
 }
 TASK_CONFIG.update(CONFIG)
