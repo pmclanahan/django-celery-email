@@ -1,0 +1,7 @@
+include README.rst
+include LICENSE
+include MANIFEST.in
+include requirements.txt
+include tox.ini
+recursive-include test_project *.py
+recursive-include djcelery_email *.py

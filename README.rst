@@ -1,6 +1,6 @@
-=================================================
-django-celery-email - Django Celery Email Backend
-=================================================
+==========================================================
+django-celery-email - A Celery-backed Django Email Backend
+==========================================================
 
 A `Django`_ 1.2+ email backend that uses a `Celery`_ queue for out-of-band sending
 of the messages.
@@ -46,8 +46,34 @@ in the ``CELERY_EMAIL_TASK_CONFIG`` setting::
         ...
     }
 
+There are some default settings. Unless you specify otherwise, the equivalent of the 
+following settings will apply::
+
+    CELERY_EMAIL_TASK_CONFIG = {
+        'name': 'djcelery_email_send',
+        'ignore_result': True,
+    }
+
 After this setup is complete, and you have a working Celery install, sending
 email will work exactly like it did before, except that the sending will be
-handled by your Celery workers.
+handled by your Celery workers::
+
+    from django.core import mail
+
+    emails = (
+        ('Hey Man', "I'm The Dude! So that's what you call me.", 'dude@aol.com', ['mr@lebowski.com']),
+        ('Dammit Walter', "Let's go bowlin'.", 'dude@aol.com', ['wsobchak@vfw.org']),
+    )
+    results = mail.send_mass_mail(emails)
+
+``results`` will be a list of celery `AsyncResult`_ objects that you may ignore, or use to check the
+status of the email delivery task, or even wait for it to complete if want. You have to enable a result
+backend and set ``ignore_result`` to ``False`` in ``CELERY_EMAIL_TASK_CONFIG`` if you want to use these. 
+See the `Celery docs`_ for more info.
+
+``len(results)`` will be the number of emails you attempted to send, and is in no way a reflection on the success or failure 
+of their delivery.
 
 .. _`Celery Task`: http://celery.readthedocs.org/en/latest/userguide/tasks.html#basics
+.. _`Celery docs`: http://celery.readthedocs.org/en/latest/userguide/tasks.html#task-states
+.. _`AsyncResult`: http://celery.readthedocs.org/en/latest/reference/celery.result.html#celery.result.AsyncResult
