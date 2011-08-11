@@ -5,7 +5,9 @@ from djcelery_email.tasks import send_email
 
 
 class CeleryEmailBackend(BaseEmailBackend):
-    
+
     def send_messages(self, email_messages):
+        results = []
         for msg in email_messages:
-            send_email.delay(msg)
+            results.append(send_email.delay(msg))
+        return results
