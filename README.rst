@@ -77,3 +77,13 @@ of their delivery.
 .. _`Celery Task`: http://celery.readthedocs.org/en/latest/userguide/tasks.html#basics
 .. _`Celery docs`: http://celery.readthedocs.org/en/latest/userguide/tasks.html#task-states
 .. _`AsyncResult`: http://celery.readthedocs.org/en/latest/reference/celery.result.html#celery.result.AsyncResult
+
+Changelog
+=========
+
+1.0.1 - 2011.10.06
+------------------
+
+* Fixed a bug that resulted in tasks that were throwing errors reporting success.
+* If there is an exception thrown by the sending email backend, the result of the task will
+  now be this exception.
