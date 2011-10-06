@@ -21,16 +21,12 @@ def send_email(message):
     try:
         conn.send_messages([message])
         logger.debug("Successfully sent email message to %r.", message.to)
-    except:
+    except Exception, e:
         # catching all exceptions b/c it could be any number of things
         # depending on the backend
-        try:
-            send_email.retry()
-            logger.info("Failed to send email message to %r, retrying.",
-                        message.to)
-        except send_email.MaxRetriesExceededError:
-            logger.error("Max retries exceeded trying to send email to %r.",
-                         message.to)
+        logger.warning("Failed to send email message to %r, retrying.",
+                    message.to)
+        send_email.retry(exc=e)
 
 
 # backwards compat

@@ -1,12 +1,17 @@
 import os.path
 import sys
 
+import djcelery
+
+djcelery.setup_loader()
+
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, '..'))
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(PROJECT_ROOT, 'db.sqlite'),
     }
 }
 
