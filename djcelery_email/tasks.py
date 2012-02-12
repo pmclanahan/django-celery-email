@@ -19,8 +19,9 @@ def send_email(message, **kwargs):
     logger = send_email.get_logger()
     conn = get_connection(backend=BACKEND)
     try:
-        conn.send_messages([message])
+        result = conn.send_messages([message])
         logger.debug("Successfully sent email message to %r.", message.to)
+        return result
     except Exception, e:
         # catching all exceptions b/c it could be any number of things
         # depending on the backend
