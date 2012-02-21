@@ -28,15 +28,15 @@ You must then set ``django-celery-email`` as your ``EMAIL_BACKEND``::
 
     EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 
-By default ``django-celery-email`` will use Django's builtin ``SMTP`` email backend 
-for the actual sending of the mail. If you'd like to use another backend, you 
-may set it in ``CELERY_EMAIL_BACKEND`` just like you would normally have set 
+By default ``django-celery-email`` will use Django's builtin ``SMTP`` email backend
+for the actual sending of the mail. If you'd like to use another backend, you
+may set it in ``CELERY_EMAIL_BACKEND`` just like you would normally have set
 ``EMAIL_BACKEND`` before you were using Celery. In fact, the normal installation
 procedure will most likely be to get your email working using only Django, then
 change ``EMAIL_BACKEND`` to ``CELERY_EMAIL_BACKEND``, and then add the new
 ``EMAIL_BACKEND`` setting from above.
 
-If you need to set any of the settings (attributes) you'd normally be able to set on a 
+If you need to set any of the settings (attributes) you'd normally be able to set on a
 `Celery Task`_ class had you written it yourself, you may specify them in a ``dict``
 in the ``CELERY_EMAIL_TASK_CONFIG`` setting::
 
@@ -46,7 +46,7 @@ in the ``CELERY_EMAIL_TASK_CONFIG`` setting::
         ...
     }
 
-There are some default settings. Unless you specify otherwise, the equivalent of the 
+There are some default settings. Unless you specify otherwise, the equivalent of the
 following settings will apply::
 
     CELERY_EMAIL_TASK_CONFIG = {
@@ -68,7 +68,7 @@ handled by your Celery workers::
 
 ``results`` will be a list of celery `AsyncResult`_ objects that you may ignore, or use to check the
 status of the email delivery task, or even wait for it to complete if want. You have to enable a result
-backend and set ``ignore_result`` to ``False`` in ``CELERY_EMAIL_TASK_CONFIG`` if you want to use these. 
+backend and set ``ignore_result`` to ``False`` in ``CELERY_EMAIL_TASK_CONFIG`` if you want to use these.
 See the `Celery docs`_ for more info.
 
 ``len(results)`` will be the number of emails you attempted to send, and is in no way a reflection on the success or failure 
@@ -80,6 +80,15 @@ of their delivery.
 
 Changelog
 =========
+
+1.0.2 - 2012.02.21
+------------------
+
+* Task and backend now accept kwargs that can be used in signal handlers.
+* Task now returns the result from the email sending backend.
+* Thanks to `Yehonatan Daniv`_ for these changes.
+
+.. _`Yehonatan Daniv`: https://bitbucket.org/ydaniv
 
 1.0.1 - 2011.10.06
 ------------------

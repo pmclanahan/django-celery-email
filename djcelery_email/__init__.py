@@ -1,6 +1,6 @@
 """Django email backend for celery."""
 
-VERSION = (1, 0, 1)
+VERSION = (1, 0, 2)
 
 __version__ = '.'.join(map(str, VERSION))
 __author__ = 'Paul McLanahan'
