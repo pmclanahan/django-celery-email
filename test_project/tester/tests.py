@@ -5,6 +5,7 @@ from django.test import TestCase
 from djcelery_email.tasks import send_email
 import djcelery_email
 
+
 class TestBackend(mail.backends.base.BaseEmailBackend):
     def __init__(self, username=None, password=None, fail_silently=False, **kwargs):
         self.username = username
@@ -12,6 +13,7 @@ class TestBackend(mail.backends.base.BaseEmailBackend):
 
     def send_messages(self, email_messages):
         return {'username': self.username, 'password': self.password}
+
 
 class DjangoCeleryEmailTests(TestCase):
 
@@ -35,7 +37,7 @@ class DjangoCeleryEmailTests(TestCase):
         self.assertEqual(len(results), 2)
         self.assertEqual(mail.outbox[0].subject, 'mass 1')
         self.assertEqual(mail.outbox[1].subject, 'mass 2')
-    
+
     def test_setting_extra_configs(self):
         self.assertEqual(send_email.queue, 'django_email')
         self.assertEqual(send_email.delivery_mode, 1)

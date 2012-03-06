@@ -81,6 +81,16 @@ of their delivery.
 Changelog
 =========
 
+1.0.3 - 2012.03.06
+------------------
+
+* Backend will now pass any kwargs with which it is initialized to the
+  email sending backend.
+* Thanks to `Fedor Tyurin`_ for the contribution.
+
+.. _`Fedor Tyurin`: https://bitbucket.org/ftyurin
+
+
 1.0.2 - 2012.02.21
 ------------------
 

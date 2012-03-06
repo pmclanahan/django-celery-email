@@ -11,7 +11,7 @@ class CeleryEmailBackend(BaseEmailBackend):
 
     def send_messages(self, email_messages, **kwargs):
         results = []
-        kwargs['backend_kwargs'] = self.init_kwargs
+        kwargs['_backend_init_kwargs'] = self.init_kwargs
         for msg in email_messages:
             results.append(send_email.delay(msg, **kwargs))
         return results
