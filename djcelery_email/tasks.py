@@ -23,7 +23,7 @@ def send_email(message, **kwargs):
         result = conn.send_messages([message])
         logger.debug("Successfully sent email message to %r.", message.to)
         return result
-    except Exception, e:
+    except Exception as e:
         # catching all exceptions b/c it could be any number of things
         # depending on the backend
         logger.warning("Failed to send email message to %r, retrying.",
