@@ -24,6 +24,8 @@ INSTALLED_APPS = (
     'tester',
 )
 
+SECRET_KEY = 'unique snowflake'
+
 TEST_RUNNER = "test_runner.DJCETestSuiteRunner"
 
 CELERY_ALWAYS_EAGER = True

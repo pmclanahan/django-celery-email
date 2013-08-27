@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.core import mail
+from django.core.mail.backends.base import BaseEmailBackend
 from django.test import TestCase
 
 from djcelery_email.tasks import send_email
 import djcelery_email
 
 
-class TestBackend(mail.backends.base.BaseEmailBackend):
+class TestBackend(BaseEmailBackend):
     def __init__(self, username=None, password=None, fail_silently=False, **kwargs):
         self.username = username
         self.password = password
