@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.mail.backends.base import BaseEmailBackend
 
 from djcelery_email.tasks import send_email

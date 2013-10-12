@@ -81,6 +81,12 @@ of their delivery.
 Changelog
 =========
 
+1.0.4 - 2013.10.12
+------------------
+
+* Add Django 1.5.2 and Python 3 support.
+* Thanks to Github user stefanw for the contribution.
+
 1.0.3 - 2012.03.06
 ------------------
 
