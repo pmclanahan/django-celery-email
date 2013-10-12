@@ -85,7 +85,9 @@ Changelog
 ------------------
 
 * Add Django 1.5.2 and Python 3 support.
-* Thanks to Github user stefanw for the contribution.
+* Thanks to `Stefan Wehrmeyer`_ for the contribution.
+
+.. _`Stefan Wehrmeyer`: https://github.com/stefanw
 
 1.0.3 - 2012.03.06
 ------------------
