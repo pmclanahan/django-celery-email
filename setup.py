@@ -56,7 +56,8 @@ setup(
     scripts=[],
     zip_safe=False,
     install_requires=[
-        "django-celery>=2.2.0",
+        "django",
+        "celery>=2.3.0",
         "django-appconf",
     ],
     cmdclass = {"test": RunTests},

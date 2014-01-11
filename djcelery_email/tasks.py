@@ -1,17 +1,19 @@
 from django.conf import settings
 from django.core.mail import get_connection
 
-from celery.task import task
+try:
+    from celery import shared_task
+except ImportError:
+    from celery.decorators import task as shared_task
 
 
-@task(name='djcelery_email_send_multiple', ignore_result=True,
-      **settings.CELERY_EMAIL_TASK_CONFIG)
+@shared_task(name='djcelery_email_send_multiple', ignore_result=True,
+             **settings.CELERY_EMAIL_TASK_CONFIG)
 def send_emails(messages, backend_kwargs):
     if hasattr(messages, 'from_email'):
         # backwards compatibility: looks like a EmailMessage object
         messages = [messages]
 
-    logger = send_email.get_logger()
     conn = get_connection(backend=settings.CELERY_EMAIL_BACKEND, **backend_kwargs)
 
     for message in messages:
@@ -28,3 +30,10 @@ def send_emails(messages, backend_kwargs):
 
 # backwards compatibility
 SendEmailTask = send_email = send_emails
+
+
+try:
+    from celery.utils.log import get_task_logger
+    logger = get_task_logger(__name__)
+except ImportError:
+    logger = send_emails.get_logger()
