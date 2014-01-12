@@ -6,6 +6,8 @@ try:
 except ImportError:
     from celery.decorators import task as shared_task
 
+import djcelery_email.conf  # Make sure our AppConf is loaded properly.
+
 
 @shared_task(name='djcelery_email_send_multiple', ignore_result=True,
              **settings.CELERY_EMAIL_TASK_CONFIG)
