@@ -25,7 +25,7 @@ def send_email(message, **kwargs):
                           **kwargs.pop('_backend_init_kwargs', {}))
     try:
         result = conn.send_messages([from_dict(message)])
-        logger.debug("Successfully sent email message to %r.", message.to)
+        logger.debug("Successfully sent email message to %r.", message['to'])
         return result
     except Exception as e:
         # catching all exceptions b/c it could be any number of things
