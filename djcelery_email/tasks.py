@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.mail import get_connection
+from django.core.mail import get_connection, EmailMessage
 
 from celery.task import task
 
@@ -14,13 +14,17 @@ TASK_CONFIG = {
 TASK_CONFIG.update(CONFIG)
 
 
+def from_dict(messagedict):
+    return EmailMessage(**messagedict)
+
+
 @task(**TASK_CONFIG)
 def send_email(message, **kwargs):
     logger = send_email.get_logger()
     conn = get_connection(backend=BACKEND,
                           **kwargs.pop('_backend_init_kwargs', {}))
     try:
-        result = conn.send_messages([message])
+        result = conn.send_messages([from_dict(message)])
         logger.debug("Successfully sent email message to %r.", message.to)
         return result
     except Exception as e:
