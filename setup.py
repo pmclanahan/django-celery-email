@@ -59,7 +59,7 @@ setup(
     scripts=[],
     zip_safe=False,
     install_requires=[
-        "django-celery>=2.2.0",
+        'celery>=3.1.9',
     ],
     cmdclass = {"test": RunTests},
     classifiers=[
