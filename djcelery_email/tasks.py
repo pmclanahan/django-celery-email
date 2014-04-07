@@ -31,7 +31,7 @@ def send_email(message, **kwargs):
         # catching all exceptions b/c it could be any number of things
         # depending on the backend
         logger.warning("Failed to send email message to %r, retrying.",
-                       message.to)
+                       message['to'])
         send_email.retry(exc=e)
 
 
