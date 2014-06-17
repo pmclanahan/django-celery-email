@@ -8,7 +8,6 @@ except ImportError:
 
 import djcelery_email.conf  # Make sure our AppConf is loaded properly.
 
-
 # Messages *must* be dicts, not instances of the EmailMessage class
 # This is because we expect Celery to use JSON encoding, and we want to prevent
 # code assuming otherwise.
@@ -22,8 +21,11 @@ def from_dict(messagedict):
         return EmailMessage(**messagedict)
 
 
-@shared_task(name='djcelery_email_send_multiple', ignore_result=True,
-             **settings.CELERY_EMAIL_TASK_CONFIG)
+TASK_CONFIG = {'name': 'djcelery_email_send_multiple', 'ignore_result': True}
+TASK_CONFIG.update(settings.CELERY_EMAIL_TASK_CONFIG)
+
+
+@shared_task(**TASK_CONFIG)
 def send_emails(messages, backend_kwargs):
 
     # catch sending object
