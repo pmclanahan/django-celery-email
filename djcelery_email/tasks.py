@@ -9,8 +9,11 @@ except ImportError:
 import djcelery_email.conf  # Make sure our AppConf is loaded properly.
 
 
-@shared_task(name='djcelery_email_send_multiple', ignore_result=True,
-             **settings.CELERY_EMAIL_TASK_CONFIG)
+TASK_CONFIG = {'name': 'djcelery_email_send_multiple', 'ignore_result': True}
+TASK_CONFIG.update(settings.CELERY_EMAIL_TASK_CONFIG)
+
+
+@shared_task(**TASK_CONFIG)
 def send_emails(messages, backend_kwargs):
     if hasattr(messages, 'from_email'):
         # backwards compatibility: looks like a EmailMessage object
