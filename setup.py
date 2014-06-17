@@ -22,15 +22,12 @@ class RunTests(Command):
     def run(self):
         this_dir = os.getcwd()
         testproj_dir = os.path.join(this_dir, "test_project")
-        os.chdir(testproj_dir)
         sys.path.append(testproj_dir)
-        from django.core.management import execute_manager
-        os.environ["DJANGO_SETTINGS_MODULE"] = os.environ.get(
-                        "DJANGO_SETTINGS_MODULE", "settings")
-        settings_file = os.environ["DJANGO_SETTINGS_MODULE"]
-        settings_mod = __import__(settings_file, {}, {}, [''])
-        execute_manager(settings_mod, argv=[
-            __file__, "test"])
+
+        from django.core.management import execute_from_command_line
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+        os.chdir(testproj_dir)
+        execute_from_command_line([__file__, "test"])
         os.chdir(this_dir)
 
     def initialize_options(self):
@@ -59,7 +56,9 @@ setup(
     scripts=[],
     zip_safe=False,
     install_requires=[
-        "django-celery>=2.2.0",
+        "django",
+        "celery>=2.3.0",
+        "django-appconf",
     ],
     cmdclass = {"test": RunTests},
     classifiers=[
