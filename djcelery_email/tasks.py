@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.mail import get_connection, EmailMessage
+from django.core.mail import get_connection, EmailMessage, EmailMultiAlternatives
 
 from celery.task import task
 
@@ -15,23 +15,26 @@ TASK_CONFIG.update(CONFIG)
 
 
 def from_dict(messagedict):
-    return EmailMessage(**messagedict)
+    if messagedict['alternatives'] is None:
+        return EmailMessage(**messagedict)
+    else:
+        return EmailMultiAlternatives(**messagedict)
 
 
 @task(**TASK_CONFIG)
-def send_email(message, **kwargs):
+def send_email(message_dict, **kwargs):
     logger = send_email.get_logger()
     conn = get_connection(backend=BACKEND,
                           **kwargs.pop('_backend_init_kwargs', {}))
     try:
-        result = conn.send_messages([from_dict(message)])
-        logger.debug("Successfully sent email message to %r.", message['to'])
+        result = conn.send_messages([from_dict(message_dict)])
+        logger.debug("Successfully sent email message to %r.", message_dict['to'])
         return result
     except Exception as e:
         # catching all exceptions b/c it could be any number of things
         # depending on the backend
         logger.warning("Failed to send email message to %r, retrying.",
-                       message['to'])
+                       message_dict['to'])
         send_email.retry(exc=e)
 
 

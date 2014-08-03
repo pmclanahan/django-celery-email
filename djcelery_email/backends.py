@@ -12,7 +12,8 @@ def to_dict(message):
             # ignore connection
             'attachments': message.attachments,
             'headers': message.extra_headers,
-            'cc': message.cc}
+            'cc': message.cc,
+            'alternatives': getattr(message, 'alternatives', None)}
 
 
 class CeleryEmailBackend(BaseEmailBackend):
