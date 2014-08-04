@@ -15,10 +15,10 @@ TASK_CONFIG.update(CONFIG)
 
 
 def from_dict(messagedict):
-    if messagedict['alternatives'] is None:
-        return EmailMessage(**messagedict)
-    else:
+    if 'alternatives' in messagedict:
         return EmailMultiAlternatives(**messagedict)
+    else:
+        return EmailMessage(**messagedict)
 
 
 @task(**TASK_CONFIG)

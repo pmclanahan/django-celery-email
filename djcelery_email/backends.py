@@ -4,16 +4,20 @@ from djcelery_email.tasks import send_email
 
 
 def to_dict(message):
-    return {'subject': message.subject,
-            'body': message.body,
-            'from_email': message.from_email,
-            'to': message.to,
-            'bcc': message.bcc,
-            # ignore connection
-            'attachments': message.attachments,
-            'headers': message.extra_headers,
-            'cc': message.cc,
-            'alternatives': getattr(message, 'alternatives', None)}
+    message_dict = {'subject': message.subject,
+                    'body': message.body,
+                    'from_email': message.from_email,
+                    'to': message.to,
+                    'bcc': message.bcc,
+                    # ignore connection
+                    'attachments': message.attachments,
+                    'headers': message.extra_headers,
+                    'cc': message.cc}
+
+    if hasattr(message, 'alternatives'):
+        message_dict['alternatives'] = message.alternatives
+
+    return message_dict
 
 
 class CeleryEmailBackend(BaseEmailBackend):
