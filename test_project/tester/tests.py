@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core import mail
 from django.core.mail.backends.base import BaseEmailBackend
 from django.test import TestCase
+from django.core.mail import EmailMultiAlternatives
 
 from djcelery_email.tasks import send_email
 import djcelery_email
@@ -25,6 +26,18 @@ class DjangoCeleryEmailTests(TestCase):
             result.get()
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'test')
+
+    def test_sending_html_email(self):
+        msg = EmailMultiAlternatives('test', 'Testing with Celery! w00t!!', 'from@example.com',
+                                    ['to@example.com'])
+        html = '<p>Testing with Celery! w00t!!</p>'
+        msg.attach_alternative(html, 'text/html')
+        results = msg.send()
+        for result in results:
+            result.get()
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'test')
+        self.assertEqual(mail.outbox[0].alternatives, [(html, 'text/html')])
 
     def test_sending_mass_email(self):
         emails = (
