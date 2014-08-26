@@ -2,7 +2,10 @@
 django-celery-email - A Celery-backed Django Email Backend
 ==========================================================
 
-A `Django`_ 1.2+ email backend that uses a `Celery`_ queue for out-of-band sending
+.. image:: https://travis-ci.org/DigiACTive/django-celery-email.svg?branch=develop
+    :target: https://travis-ci.org/DigiACTive/django-celery-email
+
+A `Django`_ 1.3+ email backend that uses a `Celery`_ queue for out-of-band sending
 of the messages.
 
 .. _`Celery`: http://celeryproject.org/
@@ -80,6 +83,18 @@ of their delivery.
 
 Changelog
 =========
+
+1.0.5 - 2014.08.24
+-----------------
+
+* Django 1.6 support, Travis CI testing, chunked sending & more - thanks `Jonas Haag`_.
+* HTML email support - thanks `Andres Riancho`_.
+* Support for JSON transit for Celery, sponsored by `DigiACTive`_.
+* Drop support for Django 1.2.
+
+.. _`Jonas Haag`: https://github.com/jonashaag
+.. _`Andres Riancho`: https://github.com/andresriancho
+.. _`DigiACTive`: https://github.com/digiactive
 
 1.0.4 - 2013.10.12
 ------------------
