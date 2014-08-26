@@ -22,15 +22,7 @@ language: python
 # file we just present an unrolled version here.
 matrix:
   include:
-    # Python 2.6: Django 1.2 to 1.6, Celery 2.3 to 3.1
-    - python: 2.6
-      env: INSTALL="Django>=1.2,<1.3 celery>=2.3,<2.4 django-celery django-override-settings"
-    - python: 2.6
-      env: INSTALL="Django>=1.2,<1.3 celery>=2.4,<2.5 django-celery django-override-settings"
-    - python: 2.6
-      env: INSTALL="Django>=1.2,<1.3 celery>=3.0,<3.1 django-celery django-override-settings"
-    - python: 2.6
-      env: INSTALL="Django>=1.2,<1.3 celery>=3.1,<3.2 django-override-settings"
+    # Python 2.6: Django 1.3 to 1.6, Celery 2.3 to 3.1
     - python: 2.6
       env: INSTALL="Django>=1.3,<1.4 celery>=2.3,<2.4 django-celery django-override-settings"
     - python: 2.6
@@ -64,15 +56,7 @@ matrix:
     - python: 2.6
       env: INSTALL="Django>=1.6,<1.7 celery>=3.1,<3.2"
     
-    # Python 2.7: Django 1.2 to 1.6, Celery 2.3 to 3.1
-    - python: 2.7
-      env: INSTALL="Django>=1.2,<1.3 celery>=2.3,<2.4 django-celery django-override-settings"
-    - python: 2.7
-      env: INSTALL="Django>=1.2,<1.3 celery>=2.4,<2.5 django-celery django-override-settings"
-    - python: 2.7
-      env: INSTALL="Django>=1.2,<1.3 celery>=3.0,<3.1 django-celery django-override-settings"
-    - python: 2.7
-      env: INSTALL="Django>=1.2,<1.3 celery>=3.1,<3.2 django-override-settings"
+    # Python 2.7: Django 1.3 to 1.6, Celery 2.3 to 3.1
     - python: 2.7
       env: INSTALL="Django>=1.3,<1.4 celery>=2.3,<2.4 django-celery django-override-settings"
     - python: 2.7
