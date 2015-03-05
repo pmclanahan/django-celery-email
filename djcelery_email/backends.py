@@ -1,18 +1,8 @@
+from django.conf import settings
 from django.core.mail.backends.base import BaseEmailBackend
 
-from djcelery_email.tasks import send_email
-
-
-def to_dict(message):
-    return {'subject': message.subject,
-            'body': message.body,
-            'from_email': message.from_email,
-            'to': message.to,
-            'bcc': message.bcc,
-            # ignore connection
-            'attachments': message.attachments,
-            'headers': message.extra_headers,
-            'cc': message.cc}
+from djcelery_email.tasks import send_emails
+from djcelery_email.utils import chunked, to_dict_list
 
 
 class CeleryEmailBackend(BaseEmailBackend):
@@ -20,9 +10,8 @@ class CeleryEmailBackend(BaseEmailBackend):
         super(CeleryEmailBackend, self).__init__(fail_silently)
         self.init_kwargs = kwargs
 
-    def send_messages(self, email_messages, **kwargs):
+    def send_messages(self, email_messages):
         results = []
-        kwargs['_backend_init_kwargs'] = self.init_kwargs
-        for msg in email_messages:
-            results.append(send_email.delay(to_dict(msg), **kwargs))
+        for chunk in chunked(email_messages, settings.CELERY_EMAIL_CHUNK_SIZE):
+            results.append(send_emails.delay(to_dict_list(chunk), self.init_kwargs))
         return results
