@@ -1,0 +1,148 @@
+sudo: false
+language: python
+
+# The current build matrix may be described as follows:
+#
+#   build := (Python version, Django version, Celery version)
+#
+# where
+#
+#   2.6 <= Python version <= 3.3 + PyPy
+#   1.3 <= Django version <= 1.6
+#   2.3 <= Celery version <= 3.1
+#
+# We skip Celery 2.5 since it doesn't introduce any relevant features
+# and the number of build variants is big enough already.
+#
+# Python 3.3 and PyPy are only supported by Django 1.5+.
+# Python 3.3 is only supported by Celery 2.4+.
+#
+# For Celery < 3.1, we additionally need to install django-celery.
+#
+# Since this kind of build matrix is difficult to encode in a .travis.yml
+# file we just present an unrolled version here.
+matrix:
+  include:
+    # Python 2.6: Django 1.2 to 1.6, Celery 2.3 to 3.1
+    - python: 2.6
+      env: INSTALL="Django>=1.2,<1.3 celery>=2.3,<2.4 django-celery django-override-settings"
+    - python: 2.6
+      env: INSTALL="Django>=1.2,<1.3 celery>=2.4,<2.5 django-celery django-override-settings"
+    - python: 2.6
+      env: INSTALL="Django>=1.2,<1.3 celery>=3.0,<3.1 django-celery django-override-settings"
+    - python: 2.6
+      env: INSTALL="Django>=1.2,<1.3 celery>=3.1,<3.2 django-override-settings"
+    - python: 2.6
+      env: INSTALL="Django>=1.3,<1.4 celery>=2.3,<2.4 django-celery django-override-settings"
+    - python: 2.6
+      env: INSTALL="Django>=1.3,<1.4 celery>=2.4,<2.5 django-celery django-override-settings"
+    - python: 2.6
+      env: INSTALL="Django>=1.3,<1.4 celery>=3.0,<3.1 django-celery django-override-settings"
+    - python: 2.6
+      env: INSTALL="Django>=1.3,<1.4 celery>=3.1,<3.2 django-override-settings"
+    - python: 2.6
+      env: INSTALL="Django>=1.4,<1.5 celery>=2.3,<2.4 django-celery"
+    - python: 2.6
+      env: INSTALL="Django>=1.4,<1.5 celery>=2.4,<2.5 django-celery"
+    - python: 2.6
+      env: INSTALL="Django>=1.4,<1.5 celery>=3.0,<3.1 django-celery"
+    - python: 2.6
+      env: INSTALL="Django>=1.4,<1.5 celery>=3.1,<3.2"
+    - python: 2.6
+      env: INSTALL="Django>=1.5,<1.6 celery>=2.3,<2.4 django-celery"
+    - python: 2.6
+      env: INSTALL="Django>=1.5,<1.6 celery>=2.4,<2.5 django-celery"
+    - python: 2.6
+      env: INSTALL="Django>=1.5,<1.6 celery>=3.0,<3.1 django-celery"
+    - python: 2.6
+      env: INSTALL="Django>=1.5,<1.6 celery>=3.1,<3.2"
+    - python: 2.6
+      env: INSTALL="Django>=1.6,<1.7 celery>=2.3,<2.4 django-celery"
+    - python: 2.6
+      env: INSTALL="Django>=1.6,<1.7 celery>=2.4,<2.5 django-celery"
+    - python: 2.6
+      env: INSTALL="Django>=1.6,<1.7 celery>=3.0,<3.1 django-celery"
+    - python: 2.6
+      env: INSTALL="Django>=1.6,<1.7 celery>=3.1,<3.2"
+    
+    # Python 2.7: Django 1.2 to 1.6, Celery 2.3 to 3.1
+    - python: 2.7
+      env: INSTALL="Django>=1.2,<1.3 celery>=2.3,<2.4 django-celery django-override-settings"
+    - python: 2.7
+      env: INSTALL="Django>=1.2,<1.3 celery>=2.4,<2.5 django-celery django-override-settings"
+    - python: 2.7
+      env: INSTALL="Django>=1.2,<1.3 celery>=3.0,<3.1 django-celery django-override-settings"
+    - python: 2.7
+      env: INSTALL="Django>=1.2,<1.3 celery>=3.1,<3.2 django-override-settings"
+    - python: 2.7
+      env: INSTALL="Django>=1.3,<1.4 celery>=2.3,<2.4 django-celery django-override-settings"
+    - python: 2.7
+      env: INSTALL="Django>=1.3,<1.4 celery>=2.4,<2.5 django-celery django-override-settings"
+    - python: 2.7
+      env: INSTALL="Django>=1.3,<1.4 celery>=3.0,<3.1 django-celery django-override-settings"
+    - python: 2.7
+      env: INSTALL="Django>=1.3,<1.4 celery>=3.1,<3.2 django-override-settings"
+    - python: 2.7
+      env: INSTALL="Django>=1.4,<1.5 celery>=2.3,<2.4 django-celery"
+    - python: 2.7
+      env: INSTALL="Django>=1.4,<1.5 celery>=2.4,<2.5 django-celery"
+    - python: 2.7
+      env: INSTALL="Django>=1.4,<1.5 celery>=3.0,<3.1 django-celery"
+    - python: 2.7
+      env: INSTALL="Django>=1.4,<1.5 celery>=3.1,<3.2"
+    - python: 2.7
+      env: INSTALL="Django>=1.5,<1.6 celery>=2.3,<2.4 django-celery"
+    - python: 2.7
+      env: INSTALL="Django>=1.5,<1.6 celery>=2.4,<2.5 django-celery"
+    - python: 2.7
+      env: INSTALL="Django>=1.5,<1.6 celery>=3.0,<3.1 django-celery"
+    - python: 2.7
+      env: INSTALL="Django>=1.5,<1.6 celery>=3.1,<3.2"
+    - python: 2.7
+      env: INSTALL="Django>=1.6,<1.7 celery>=2.3,<2.4 django-celery"
+    - python: 2.7
+      env: INSTALL="Django>=1.6,<1.7 celery>=2.4,<2.5 django-celery"
+    - python: 2.7
+      env: INSTALL="Django>=1.6,<1.7 celery>=3.0,<3.1 django-celery"
+    - python: 2.7
+      env: INSTALL="Django>=1.6,<1.7 celery>=3.1,<3.2"
+      
+    # Python 3.3: Django 1.5 to 1.6, Celery 2.4 to 3.1
+    - python: 3.3
+      env: INSTALL="Django>=1.5,<1.6 celery>=2.4,<2.5 django-celery"
+    - python: 3.3
+      env: INSTALL="Django>=1.5,<1.6 celery>=3.0,<3.1 django-celery"
+    - python: 3.3
+      env: INSTALL="Django>=1.5,<1.6 celery>=3.1,<3.2"
+    - python: 3.3
+      env: INSTALL="Django>=1.6,<1.7 celery>=2.4,<2.5 django-celery"
+    - python: 3.3
+      env: INSTALL="Django>=1.6,<1.7 celery>=3.0,<3.1 django-celery"
+    - python: 3.3
+      env: INSTALL="Django>=1.6,<1.7 celery>=3.1,<3.2"
+      
+    # PyPy: Django 1.5 to 1.6, Celery 2.3 to 3.1
+    - python: pypy
+      env: INSTALL="Django>=1.5,<1.6 celery>=2.3,<2.4 django-celery"
+    - python: pypy
+      env: INSTALL="Django>=1.5,<1.6 celery>=2.4,<2.5 django-celery"
+    - python: pypy
+      env: INSTALL="Django>=1.5,<1.6 celery>=3.0,<3.1 django-celery"
+    - python: pypy
+      env: INSTALL="Django>=1.5,<1.6 celery>=3.1,<3.2"
+    - python: pypy
+      env: INSTALL="Django>=1.6,<1.7 celery>=2.3,<2.4 django-celery"
+    - python: pypy
+      env: INSTALL="Django>=1.6,<1.7 celery>=2.4,<2.5 django-celery"
+    - python: pypy
+      env: INSTALL="Django>=1.6,<1.7 celery>=3.0,<3.1 django-celery"
+    - python: pypy
+      env: INSTALL="Django>=1.6,<1.7 celery>=3.1,<3.2"
+
+
+install:
+  - pip install $INSTALL
+  - pip install -r requirements.txt
+
+
+script: python setup.py test
