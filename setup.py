@@ -14,32 +14,6 @@ except ImportError:
 
 import djcelery_email as distmeta
 
-
-class RunTests(Command):
-    description = "Run the django test suite from the tests dir."
-    user_options = []
-
-    def run(self):
-        this_dir = os.getcwd()
-        testproj_dir = os.path.join(this_dir, "test_project")
-        os.chdir(testproj_dir)
-        sys.path.append(testproj_dir)
-        from django.core.management import execute_manager
-        os.environ["DJANGO_SETTINGS_MODULE"] = os.environ.get(
-                        "DJANGO_SETTINGS_MODULE", "settings")
-        settings_file = os.environ["DJANGO_SETTINGS_MODULE"]
-        settings_mod = __import__(settings_file, {}, {}, [''])
-        execute_manager(settings_mod, argv=[
-            __file__, "test"])
-        os.chdir(this_dir)
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-
 if os.path.exists("README.rst"):
     long_description = codecs.open("README.rst", "r", "utf-8").read()
 else:
@@ -61,7 +35,10 @@ setup(
     install_requires=[
         "django-celery>=2.2.0",
     ],
-    cmdclass = {"test": RunTests},
+    tests_require=(
+        'django-setuptest',
+    ),
+    test_suite='setuptest.setuptest.SetupTestSuite',
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Framework :: Django",

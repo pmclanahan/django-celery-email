@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, '..'))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_ROOT, 'db.sqlite'),
+        'NAME': ':memory:',
     }
 }
 
@@ -21,12 +21,12 @@ ROOT_URLCONF = 'test_project.urls'
 INSTALLED_APPS = (
     'djcelery',
     'djcelery_email',
-    'tester',
+    'test_project.tester',
 )
 
 SECRET_KEY = 'unique snowflake'
 
-TEST_RUNNER = "test_runner.DJCETestSuiteRunner"
+TEST_RUNNER = "test_project.test_runner.DJCETestSuiteRunner"
 
 CELERY_ALWAYS_EAGER = True
 CELERY_EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
