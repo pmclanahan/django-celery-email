@@ -11,7 +11,7 @@ except ImportError:
 
 import celery
 from djcelery_email import tasks
-from djcelery_email.backends import to_dict
+from djcelery_email.utils import to_dict
 
 
 def even(n):
@@ -42,8 +42,17 @@ class TaskTests(TestCase):
         - should pass the given kwargs to that backend
         - should retry sending failed messages (see TaskErrorTests)
     """
-    def test_send_single_email(self):
+    def test_send_single_email_object(self):
         """ It should accept and send a single EmailMessage object. """
+        msg = mail.EmailMessage()
+        tasks.send_email(msg, backend_kwargs={})
+        self.assertEqual(len(mail.outbox), 1)
+        # we can't compare them directly as it's converted into a dict
+        # for JSONification and then back. Compare dicts instead.
+        self.assertEqual(to_dict(msg), to_dict(mail.outbox[0]))
+
+    def test_send_single_email_dict(self):
+        """ It should accept and send a single EmailMessage dict. """
         msg = mail.EmailMessage()
         tasks.send_email(to_dict(msg), backend_kwargs={})
         self.assertEqual(len(mail.outbox), 1)
@@ -51,12 +60,22 @@ class TaskTests(TestCase):
         # for JSONification and then back. Compare dicts instead.
         self.assertEqual(to_dict(msg), to_dict(mail.outbox[0]))
 
-    def test_send_multiple_emails(self):
+    def test_send_multiple_email_objects(self):
         """ It should accept and send a list of EmailMessage objects. """
         N = 10
         msgs = [mail.EmailMessage() for i in range(N)]
         tasks.send_emails([to_dict(msg) for msg in msgs],
                           backend_kwargs={})
+
+        self.assertEqual(len(mail.outbox), N)
+        for i in range(N):
+            self.assertEqual(to_dict(msgs[i]), to_dict(mail.outbox[i]))
+
+    def test_send_multiple_email_dicts(self):
+        """ It should accept and send a list of EmailMessage dicts. """
+        N = 10
+        msgs = [mail.EmailMessage() for i in range(N)]
+        tasks.send_emails(msgs, backend_kwargs={})
 
         self.assertEqual(len(mail.outbox), N)
         for i in range(N):

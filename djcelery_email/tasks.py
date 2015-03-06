@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.mail import get_connection, EmailMessage, EmailMultiAlternatives
+from django.core.mail import get_connection
 
 try:
     from celery import shared_task
@@ -8,20 +8,11 @@ except ImportError:
 
 # Make sure our AppConf is loaded properly.
 import djcelery_email.conf  # noqa
+from djcelery_email.utils import from_dict, to_dict
 
 # Messages *must* be dicts, not instances of the EmailMessage class
 # This is because we expect Celery to use JSON encoding, and we want to prevent
 # code assuming otherwise.
-
-
-def from_dict(messagedict):
-    if hasattr(messagedict, 'from_email'):
-        raise ValueError("This appears to be an EmailMessage object, rather than a dictionary.")
-    elif 'alternatives' in messagedict:
-        return EmailMultiAlternatives(**messagedict)
-    else:
-        return EmailMessage(**messagedict)
-
 
 TASK_CONFIG = {'name': 'djcelery_email_send_multiple', 'ignore_result': True}
 TASK_CONFIG.update(settings.CELERY_EMAIL_TASK_CONFIG)
@@ -29,14 +20,17 @@ TASK_CONFIG.update(settings.CELERY_EMAIL_TASK_CONFIG)
 
 @shared_task(**TASK_CONFIG)
 def send_emails(messages, backend_kwargs):
-
-    # catch sending object
+    # backward compat: catch sending object
     if hasattr(messages, 'from_email'):
-        raise ValueError("This appears to be an EmailMessage object, rather than a dictionary.")
+        messages = [to_dict(messages)]
 
-    # catch send_email (not send_email*s*) case.
-    if isinstance(messages, dict):
+    # backward compat: catch send_email (not send_email*s*) case.
+    elif isinstance(messages, dict):
         messages = [messages]
+
+    # backward compat: iterable of objects
+    elif len(messages) > 0 and hasattr(messages[0], 'from_email'):
+        messages = [to_dict(m) for m in messages]
 
     conn = get_connection(backend=settings.CELERY_EMAIL_BACKEND, **backend_kwargs)
     conn.open()

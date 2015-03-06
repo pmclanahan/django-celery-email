@@ -1,5 +1,8 @@
 sudo: false
 language: python
+branches:
+  only:
+    - master
 
 # The current build matrix may be described as follows:
 #
