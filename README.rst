@@ -84,8 +84,15 @@ of their delivery.
 Changelog
 =========
 
+1.1.0 - 2015.03.06
+------------------
+
+* New PyPI release rolling up 1.0.5 changes and some cleanup.
+* More backward compatability in task. Will still accept message objects and lists of message objects.
+* Thanks again to everyone who contributed to 1.0.5.
+
 1.0.5 - 2014.08.24
------------------
+------------------
 
 * Django 1.6 support, Travis CI testing, chunked sending & more - thanks `Jonas Haag`_.
 * HTML email support - thanks `Andres Riancho`_.
