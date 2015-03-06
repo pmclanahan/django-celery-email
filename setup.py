@@ -3,7 +3,6 @@
 import os
 import sys
 import codecs
-import platform
 
 try:
     from setuptools import setup, find_packages, Command
@@ -60,15 +59,16 @@ setup(
         "celery>=2.3.0",
         "django-appconf",
     ],
-    cmdclass = {"test": RunTests},
+    cmdclass={"test": RunTests},
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Framework :: Django",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.5",
         "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.4",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Operating System :: POSIX",

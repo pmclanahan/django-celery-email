@@ -1,3 +1,4 @@
 Django
 celery>=2.3.0
 django-appconf
+flake8

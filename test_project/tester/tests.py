@@ -56,7 +56,7 @@ class TaskTests(TestCase):
         N = 10
         msgs = [mail.EmailMessage() for i in range(N)]
         tasks.send_emails([to_dict(msg) for msg in msgs],
-                    backend_kwargs={})
+                          backend_kwargs={})
 
         self.assertEqual(len(mail.outbox), N)
         for i in range(N):
@@ -103,6 +103,7 @@ class TaskErrorTests(TestCase):
         super(TaskErrorTests, self).setUp()
 
         self._retry_calls = []
+
         def mock_retry(*args, **kwargs):
             self._retry_calls.append((args, kwargs))
 
@@ -118,7 +119,7 @@ class TaskErrorTests(TestCase):
         N = 10
         msgs = [mail.EmailMessage(subject="msg %d" % i) for i in range(N)]
         tasks.send_emails([to_dict(msg) for msg in msgs],
-                         backend_kwargs={'foo': 'bar'})
+                          backend_kwargs={'foo': 'bar'})
 
         # Assert that only "odd"/good messages have been sent.
         self.assertEqual(len(mail.outbox), 5)
@@ -138,7 +139,6 @@ class TaskErrorTests(TestCase):
             self.assertFalse(kwargs.get('throw', True))
 
 
-
 class BackendTests(TestCase):
     """
     Tests that our *own* email backend ('backends.CeleryEmailBackend') works,
@@ -150,6 +150,7 @@ class BackendTests(TestCase):
         super(BackendTests, self).setUp()
 
         self._delay_calls = []
+
         def mock_delay(*args, **kwargs):
             self._delay_calls.append((args, kwargs))
 
@@ -237,7 +238,7 @@ class IntegrationTests(TestCase):
 
     def test_sending_html_email(self):
         msg = EmailMultiAlternatives('test', 'Testing with Celery! w00t!!', 'from@example.com',
-                                    ['to@example.com'])
+                                     ['to@example.com'])
         html = '<p>Testing with Celery! w00t!!</p>'
         msg.attach_alternative(html, 'text/html')
         results = msg.send()

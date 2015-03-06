@@ -6,7 +6,8 @@ try:
 except ImportError:
     from celery.decorators import task as shared_task
 
-import djcelery_email.conf  # Make sure our AppConf is loaded properly.
+# Make sure our AppConf is loaded properly.
+import djcelery_email.conf  # noqa
 
 # Messages *must* be dicts, not instances of the EmailMessage class
 # This is because we expect Celery to use JSON encoding, and we want to prevent

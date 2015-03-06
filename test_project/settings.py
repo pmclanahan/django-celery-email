@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, '..'))
 
@@ -30,7 +31,7 @@ TEST_RUNNER = "test_runner.DJCETestSuiteRunner"
 
 CELERY_EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 CELERY_EMAIL_TASK_CONFIG = {
-    'queue' : 'django_email',
-    'delivery_mode' : 1, # non persistent
-    'rate_limit' : '50/m', # 50 chunks per minute
+    'queue': 'django_email',
+    'delivery_mode': 1,  # non persistent
+    'rate_limit': '50/m',  # 50 chunks per minute
 }
