@@ -12,6 +12,7 @@ import djcelery_email.conf  # Make sure our AppConf is loaded properly.
 # This is because we expect Celery to use JSON encoding, and we want to prevent
 # code assuming otherwise.
 
+
 def from_dict(messagedict):
     if hasattr(messagedict, 'from_email'):
         raise ValueError("This appears to be an EmailMessage object, rather than a dictionary.")

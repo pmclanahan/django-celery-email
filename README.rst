@@ -2,8 +2,8 @@
 django-celery-email - A Celery-backed Django Email Backend
 ==========================================================
 
-.. image:: https://travis-ci.org/DigiACTive/django-celery-email.svg?branch=develop
-    :target: https://travis-ci.org/DigiACTive/django-celery-email
+.. image:: https://travis-ci.org/pmclanahan/django-celery-email.svg?branch=master
+    :target: https://travis-ci.org/pmclanahan/django-celery-email
 
 A `Django`_ 1.3+ email backend that uses a `Celery`_ queue for out-of-band sending
 of the messages.

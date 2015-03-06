@@ -1,5 +1,6 @@
 from appconf import AppConf
 
+
 class DjangoCeleryEmailAppConf(AppConf):
     class Meta:
         prefix = 'CELERY_EMAIL'

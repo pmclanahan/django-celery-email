@@ -1,3 +1,4 @@
+sudo: false
 language: python
 
 # The current build matrix may be described as follows:
