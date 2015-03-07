@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.mail.backends.base import BaseEmailBackend
 
 from djcelery_email.tasks import send_emails
-from djcelery_email.utils import chunked, to_dict
+from djcelery_email.utils import chunked, email_to_dict
 
 
 class CeleryEmailBackend(BaseEmailBackend):
@@ -12,7 +12,7 @@ class CeleryEmailBackend(BaseEmailBackend):
 
     def send_messages(self, email_messages):
         result_tasks = []
-        messages = [to_dict(msg) for msg in email_messages]
+        messages = [email_to_dict(msg) for msg in email_messages]
         for chunk in chunked(messages, settings.CELERY_EMAIL_CHUNK_SIZE):
             result_tasks.append(send_emails.delay(chunk, self.init_kwargs))
         return result_tasks

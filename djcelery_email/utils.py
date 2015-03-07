@@ -18,7 +18,10 @@ def chunked(iterator, chunksize):
         yield chunk
 
 
-def to_dict(message):
+def email_to_dict(message):
+    if isinstance(message, dict):
+        return message
+
     message_dict = {'subject': message.subject,
                     'body': message.body,
                     'from_email': message.from_email,
@@ -35,9 +38,9 @@ def to_dict(message):
     return message_dict
 
 
-def from_dict(messagedict):
+def dict_to_email(messagedict):
     if hasattr(messagedict, 'from_email'):
-        raise ValueError("This appears to be an EmailMessage object, rather than a dictionary.")
+        return messagedict
     elif 'alternatives' in messagedict:
         return EmailMultiAlternatives(**messagedict)
     else:

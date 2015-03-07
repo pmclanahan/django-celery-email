@@ -11,7 +11,7 @@ except ImportError:
 
 import celery
 from djcelery_email import tasks
-from djcelery_email.utils import to_dict
+from djcelery_email.utils import email_to_dict
 
 
 def even(n):
@@ -49,27 +49,27 @@ class TaskTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         # we can't compare them directly as it's converted into a dict
         # for JSONification and then back. Compare dicts instead.
-        self.assertEqual(to_dict(msg), to_dict(mail.outbox[0]))
+        self.assertEqual(email_to_dict(msg), email_to_dict(mail.outbox[0]))
 
     def test_send_single_email_dict(self):
         """ It should accept and send a single EmailMessage dict. """
         msg = mail.EmailMessage()
-        tasks.send_email(to_dict(msg), backend_kwargs={})
+        tasks.send_email(email_to_dict(msg), backend_kwargs={})
         self.assertEqual(len(mail.outbox), 1)
         # we can't compare them directly as it's converted into a dict
         # for JSONification and then back. Compare dicts instead.
-        self.assertEqual(to_dict(msg), to_dict(mail.outbox[0]))
+        self.assertEqual(email_to_dict(msg), email_to_dict(mail.outbox[0]))
 
     def test_send_multiple_email_objects(self):
         """ It should accept and send a list of EmailMessage objects. """
         N = 10
         msgs = [mail.EmailMessage() for i in range(N)]
-        tasks.send_emails([to_dict(msg) for msg in msgs],
+        tasks.send_emails([email_to_dict(msg) for msg in msgs],
                           backend_kwargs={})
 
         self.assertEqual(len(mail.outbox), N)
         for i in range(N):
-            self.assertEqual(to_dict(msgs[i]), to_dict(mail.outbox[i]))
+            self.assertEqual(email_to_dict(msgs[i]), email_to_dict(mail.outbox[i]))
 
     def test_send_multiple_email_dicts(self):
         """ It should accept and send a list of EmailMessage dicts. """
@@ -79,14 +79,14 @@ class TaskTests(TestCase):
 
         self.assertEqual(len(mail.outbox), N)
         for i in range(N):
-            self.assertEqual(to_dict(msgs[i]), to_dict(mail.outbox[i]))
+            self.assertEqual(email_to_dict(msgs[i]), email_to_dict(mail.outbox[i]))
 
     @override_settings(CELERY_EMAIL_BACKEND='tester.tests.TracingBackend')
     def test_uses_correct_backend(self):
         """ It should use the backend configured in CELERY_EMAIL_BACKEND. """
         TracingBackend.called = False
         msg = mail.EmailMessage()
-        tasks.send_email(to_dict(msg), backend_kwargs={})
+        tasks.send_email(email_to_dict(msg), backend_kwargs={})
         self.assertTrue(TracingBackend.called)
 
     @override_settings(CELERY_EMAIL_BACKEND='tester.tests.TracingBackend')
@@ -94,7 +94,7 @@ class TaskTests(TestCase):
         """ It should pass kwargs like username and password to the backend. """
         TracingBackend.kwargs = None
         msg = mail.EmailMessage()
-        tasks.send_email(to_dict(msg), backend_kwargs={'foo': 'bar'})
+        tasks.send_email(email_to_dict(msg), backend_kwargs={'foo': 'bar'})
         self.assertEqual(TracingBackend.kwargs.get('foo'), 'bar')
 
 
@@ -137,7 +137,7 @@ class TaskErrorTests(TestCase):
     def test_send_multiple_emails(self):
         N = 10
         msgs = [mail.EmailMessage(subject="msg %d" % i) for i in range(N)]
-        tasks.send_emails([to_dict(msg) for msg in msgs],
+        tasks.send_emails([email_to_dict(msg) for msg in msgs],
                           backend_kwargs={'foo': 'bar'})
 
         # Assert that only "odd"/good messages have been sent.
@@ -153,7 +153,7 @@ class TaskErrorTests(TestCase):
         odd_msgs = [msg for idx, msg in enumerate(msgs) if even(idx)]
         for msg, (args, kwargs) in zip(odd_msgs, self._retry_calls):
             retry_args = args[0]
-            self.assertEqual(retry_args, [[to_dict(msg)], {'foo': 'bar'}])
+            self.assertEqual(retry_args, [[email_to_dict(msg)], {'foo': 'bar'}])
             self.assertTrue(isinstance(kwargs.get('exc'), RuntimeError))
             self.assertFalse(kwargs.get('throw', True))
 
