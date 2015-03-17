@@ -19,7 +19,11 @@ TASK_CONFIG.update(settings.CELERY_EMAIL_TASK_CONFIG)
 
 
 @shared_task(**TASK_CONFIG)
-def send_emails(messages, backend_kwargs):
+def send_emails(messages, backend_kwargs={}, **kwargs):
+    # backward compat: handle **kwargs and missing backend_kwargs
+    backend_kwargs = backend_kwargs.copy()  # Avoid modifying mutable default
+    backend_kwargs.update(kwargs)
+
     # backward compat: catch single object or dict
     if isinstance(messages, (EmailMessage, dict)):
         messages = [messages]
