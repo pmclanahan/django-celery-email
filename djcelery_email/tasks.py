@@ -19,10 +19,12 @@ TASK_CONFIG.update(settings.CELERY_EMAIL_TASK_CONFIG)
 
 
 @shared_task(**TASK_CONFIG)
-def send_emails(messages, backend_kwargs={}, **kwargs):
+def send_emails(messages, backend_kwargs=None, **kwargs):
     # backward compat: handle **kwargs and missing backend_kwargs
-    backend_kwargs = backend_kwargs.copy()  # Avoid modifying mutable default
-    backend_kwargs.update(kwargs)
+    combined_kwargs = {}
+    if backend_kwargs is not None:
+        combined_kwargs.update(backend_kwargs)
+    combined_kwargs.update(kwargs)
 
     # backward compat: catch single object or dict
     if isinstance(messages, (EmailMessage, dict)):
@@ -31,7 +33,7 @@ def send_emails(messages, backend_kwargs={}, **kwargs):
     # make sure they're all dicts
     messages = [email_to_dict(m) for m in messages]
 
-    conn = get_connection(backend=settings.CELERY_EMAIL_BACKEND, **backend_kwargs)
+    conn = get_connection(backend=settings.CELERY_EMAIL_BACKEND, **combined_kwargs)
     conn.open()
 
     for message in messages:
@@ -43,7 +45,7 @@ def send_emails(messages, backend_kwargs={}, **kwargs):
             # could be any number of things, depending on the backend
             logger.warning("Failed to send email message to %r, retrying. (%r)",
                            message['to'], e)
-            send_emails.retry([[message], backend_kwargs], exc=e, throw=False)
+            send_emails.retry([[message], combined_kwargs], exc=e, throw=False)
 
     conn.close()
 
