@@ -51,6 +51,15 @@ class TaskTests(TestCase):
         # for JSONification and then back. Compare dicts instead.
         self.assertEqual(email_to_dict(msg), email_to_dict(mail.outbox[0]))
 
+    def test_send_single_email_object_no_backend_kwargs(self):
+        """ It should send email with backend_kwargs not provided. """
+        msg = mail.EmailMessage()
+        tasks.send_email(msg)
+        self.assertEqual(len(mail.outbox), 1)
+        # we can't compare them directly as it's converted into a dict
+        # for JSONification and then back. Compare dicts instead.
+        self.assertEqual(email_to_dict(msg), email_to_dict(mail.outbox[0]))
+
     def test_send_single_email_dict(self):
         """ It should accept and send a single EmailMessage dict. """
         msg = mail.EmailMessage()
@@ -95,6 +104,14 @@ class TaskTests(TestCase):
         TracingBackend.kwargs = None
         msg = mail.EmailMessage()
         tasks.send_email(email_to_dict(msg), backend_kwargs={'foo': 'bar'})
+        self.assertEqual(TracingBackend.kwargs.get('foo'), 'bar')
+
+    @override_settings(CELERY_EMAIL_BACKEND='tester.tests.TracingBackend')
+    def test_backend_parameters_kwargs(self):
+        """ It should pass on kwargs specified as keyword params. """
+        TracingBackend.kwargs = None
+        msg = mail.EmailMessage()
+        tasks.send_email(email_to_dict(msg), foo='bar')
         self.assertEqual(TracingBackend.kwargs.get('foo'), 'bar')
 
 
