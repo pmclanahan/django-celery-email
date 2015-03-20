@@ -84,6 +84,13 @@ of their delivery.
 Changelog
 =========
 
+1.1.1 - 2015.03.20
+------------------
+
+* Fix for backward compatibility of task kwarg handling - Thanks `Jeremy Thurgood`_.
+
+.. _Jeremy Thurgood: https://github.com/jerith
+
 1.1.0 - 2015.03.06
 ------------------
 
