@@ -60,6 +60,13 @@ class TaskTests(TestCase):
         # for JSONification and then back. Compare dicts instead.
         self.assertEqual(email_to_dict(msg), email_to_dict(mail.outbox[0]))
 
+    def test_send_single_email_object_response(self):
+        """ It should return the number of messages sent, 1 here. """
+        msg = mail.EmailMessage()
+        messages_sent = tasks.send_email(msg)
+        self.assertEqual(messages_sent, 1)
+        self.assertEqual(len(mail.outbox), 1)
+
     def test_send_single_email_dict(self):
         """ It should accept and send a single EmailMessage dict. """
         msg = mail.EmailMessage()
@@ -89,6 +96,14 @@ class TaskTests(TestCase):
         self.assertEqual(len(mail.outbox), N)
         for i in range(N):
             self.assertEqual(email_to_dict(msgs[i]), email_to_dict(mail.outbox[i]))
+
+    def test_send_multiple_email_dicts_response(self):
+        """ It should return the number of messages sent. """
+        N = 10
+        msgs = [mail.EmailMessage() for i in range(N)]
+        messages_sent = tasks.send_emails(msgs, backend_kwargs={})
+        self.assertEqual(messages_sent, N)
+        self.assertEqual(len(mail.outbox), N)
 
     @override_settings(CELERY_EMAIL_BACKEND='tester.tests.TracingBackend')
     def test_uses_correct_backend(self):
