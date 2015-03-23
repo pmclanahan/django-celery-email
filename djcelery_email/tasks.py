@@ -36,9 +36,13 @@ def send_emails(messages, backend_kwargs=None, **kwargs):
     conn = get_connection(backend=settings.CELERY_EMAIL_BACKEND, **combined_kwargs)
     conn.open()
 
+    messages_sent = 0
+
     for message in messages:
         try:
-            conn.send_messages([dict_to_email(message)])
+            sent = conn.send_messages([dict_to_email(message)])
+            if sent is not None:
+                messages_sent += sent
             logger.debug("Successfully sent email message to %r.", message['to'])
         except Exception as e:
             # Not expecting any specific kind of exception here because it
@@ -48,6 +52,7 @@ def send_emails(messages, backend_kwargs=None, **kwargs):
             send_emails.retry([[message], combined_kwargs], exc=e, throw=False)
 
     conn.close()
+    return messages_sent
 
 
 # backwards compatibility

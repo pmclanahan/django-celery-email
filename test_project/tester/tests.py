@@ -60,6 +60,13 @@ class TaskTests(TestCase):
         # for JSONification and then back. Compare dicts instead.
         self.assertEqual(email_to_dict(msg), email_to_dict(mail.outbox[0]))
 
+    def test_send_single_email_object_response(self):
+        """ It should return the number of messages sent, 1 here. """
+        msg = mail.EmailMessage()
+        messages_sent = tasks.send_email(msg)
+        self.assertEqual(messages_sent, 1)
+        self.assertEqual(len(mail.outbox), 1)
+
     def test_send_single_email_dict(self):
         """ It should accept and send a single EmailMessage dict. """
         msg = mail.EmailMessage()
@@ -89,6 +96,14 @@ class TaskTests(TestCase):
         self.assertEqual(len(mail.outbox), N)
         for i in range(N):
             self.assertEqual(email_to_dict(msgs[i]), email_to_dict(mail.outbox[i]))
+
+    def test_send_multiple_email_dicts_response(self):
+        """ It should return the number of messages sent. """
+        N = 10
+        msgs = [mail.EmailMessage() for i in range(N)]
+        messages_sent = tasks.send_emails(msgs, backend_kwargs={})
+        self.assertEqual(messages_sent, N)
+        self.assertEqual(len(mail.outbox), N)
 
     @override_settings(CELERY_EMAIL_BACKEND='tester.tests.TracingBackend')
     def test_uses_correct_backend(self):
@@ -265,10 +280,9 @@ class IntegrationTests(TestCase):
         celery.current_app.conf.CELERY_ALWAYS_EAGER = False
 
     def test_sending_email(self):
-        results = mail.send_mail('test', 'Testing with Celery! w00t!!', 'from@example.com',
-                                 ['to@example.com'])
-        for result in results:
-            result.get()
+        [result] = mail.send_mail('test', 'Testing with Celery! w00t!!', 'from@example.com',
+                                  ['to@example.com'])
+        self.assertEqual(result.get(), 1)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'test')
 
@@ -277,9 +291,8 @@ class IntegrationTests(TestCase):
                                      ['to@example.com'])
         html = '<p>Testing with Celery! w00t!!</p>'
         msg.attach_alternative(html, 'text/html')
-        results = msg.send()
-        for result in results:
-            result.get()
+        [result] = msg.send()
+        self.assertEqual(result.get(), 1)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'test')
         self.assertEqual(mail.outbox[0].alternatives, [(html, 'text/html')])
@@ -289,10 +302,21 @@ class IntegrationTests(TestCase):
             ('mass 1', 'mass message 1', 'from@example.com', ['to@example.com']),
             ('mass 2', 'mass message 2', 'from@example.com', ['to@example.com']),
         )
-        results = mail.send_mass_mail(emails)
-        for result in results:
-            result.get()
-        self.assertEqual(len(results), 1)
+        [result] = mail.send_mass_mail(emails)
+        self.assertEqual(result.get(), 2)
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].subject, 'mass 1')
         self.assertEqual(mail.outbox[1].subject, 'mass 2')
+
+    def test_sending_mass_email_chunked(self):
+        emails = [
+            ('mass %i' % i, 'message', 'from@example.com', ['to@example.com'])
+            for i in range(11)]
+        with override_settings(CELERY_EMAIL_CHUNK_SIZE=4):
+            [result1, result2, result3] = mail.send_mass_mail(emails)
+            self.assertEqual(result1.get(), 4)
+            self.assertEqual(result2.get(), 4)
+            self.assertEqual(result3.get(), 3)
+            self.assertEqual(len(mail.outbox), 11)
+            self.assertEqual(mail.outbox[0].subject, 'mass 0')
+            self.assertEqual(mail.outbox[1].subject, 'mass 1')
