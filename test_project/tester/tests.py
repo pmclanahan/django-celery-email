@@ -299,7 +299,7 @@ class IntegrationTests(TestCase):
 
     def test_sending_html_only_email(self):
         msg = mail.EmailMessage('test', 'Testing <b>with Celery! w00t!!</b>', 'from@example.com',
-                                     ['to@example.com'])
+                                ['to@example.com'])
         msg.content_subtype = "html"
         [result] = msg.send()
         self.assertEqual(result.get(), 1)
