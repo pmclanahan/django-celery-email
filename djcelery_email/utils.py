@@ -34,14 +34,24 @@ def email_to_dict(message):
 
     if hasattr(message, 'alternatives'):
         message_dict['alternatives'] = message.alternatives
+    if message.content_subtype != EmailMessage.content_subtype:
+        message_dict["content_subtype"] = message.content_subtype
 
     return message_dict
 
 
 def dict_to_email(messagedict):
-    if hasattr(messagedict, 'from_email'):
-        return messagedict
-    elif 'alternatives' in messagedict:
-        return EmailMultiAlternatives(**messagedict)
+    if isinstance(messagedict, dict) and "content_subtype" in messagedict:
+        content_subtype = messagedict["content_subtype"]
+        del messagedict["content_subtype"]
     else:
-        return EmailMessage(**messagedict)
+        content_subtype = None
+    if hasattr(messagedict, 'from_email'):
+        ret = messagedict
+    elif 'alternatives' in messagedict:
+        ret = EmailMultiAlternatives(**messagedict)
+    else:
+        ret = EmailMessage(**messagedict)
+    if content_subtype:
+        ret.content_subtype = content_subtype
+    return ret
