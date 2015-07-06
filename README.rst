@@ -84,6 +84,13 @@ of their delivery.
 Changelog
 =========
 
+1.1.2 - 2015.07.06
+------------------
+
+* Fix for HTML-only emails. Thanks `gnarvaja`_.
+
+.. _gnarvaja: https://github.com/gnarvaja
+
 1.1.1 - 2015.03.20
 ------------------
 
