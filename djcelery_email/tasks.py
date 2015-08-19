@@ -17,6 +17,15 @@ from djcelery_email.utils import dict_to_email, email_to_dict
 TASK_CONFIG = {'name': 'djcelery_email_send_multiple', 'ignore_result': True}
 TASK_CONFIG.update(settings.CELERY_EMAIL_TASK_CONFIG)
 
+# import base if string to allow a base celery task
+if 'base' in TASK_CONFIG and isinstance(TASK_CONFIG['base'], basestring):
+    try:
+        from django.utils.module_loading import import_string
+    except ImportError:
+        # 1.6
+        from django.utils.module_loading import import_by_path as import_string
+    TASK_CONFIG['base'] = import_string(TASK_CONFIG['base'])
+
 
 @shared_task(**TASK_CONFIG)
 def send_emails(messages, backend_kwargs=None, **kwargs):
