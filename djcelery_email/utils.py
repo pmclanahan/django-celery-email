@@ -54,4 +54,5 @@ def dict_to_email(messagedict):
         ret = EmailMessage(**messagedict)
     if content_subtype:
         ret.content_subtype = content_subtype
+        messagedict["content_subtype"] = content_subtype  # bring back content subtype for 'retry'
     return ret
