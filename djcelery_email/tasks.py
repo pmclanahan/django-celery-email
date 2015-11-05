@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.core.mail import EmailMessage, get_connection
 
+from six import string_types
+
 try:
     from celery import shared_task
 except ImportError:
@@ -16,6 +18,15 @@ from djcelery_email.utils import dict_to_email, email_to_dict
 
 TASK_CONFIG = {'name': 'djcelery_email_send_multiple', 'ignore_result': True}
 TASK_CONFIG.update(settings.CELERY_EMAIL_TASK_CONFIG)
+
+# import base if string to allow a base celery task
+if 'base' in TASK_CONFIG and isinstance(TASK_CONFIG['base'], string_types):
+    try:
+        from django.utils.module_loading import import_string
+    except ImportError:
+        # 1.6
+        from django.utils.module_loading import import_by_path as import_string
+    TASK_CONFIG['base'] = import_string(TASK_CONFIG['base'])
 
 
 @shared_task(**TASK_CONFIG)
