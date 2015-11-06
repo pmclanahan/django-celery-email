@@ -1,13 +1,9 @@
 from django.core import mail
 from django.core.mail.backends.base import BaseEmailBackend
-from django.test import TestCase
 from django.core.mail.backends import locmem
 from django.core.mail import EmailMultiAlternatives
-
-try:
-    from django.test.utils import override_settings
-except ImportError:
-    from override_settings import override_settings
+from django.test import TestCase
+from django.test.utils import override_settings
 
 import celery
 from djcelery_email import tasks
@@ -105,7 +101,7 @@ class TaskTests(TestCase):
         self.assertEqual(messages_sent, N)
         self.assertEqual(len(mail.outbox), N)
 
-    @override_settings(CELERY_EMAIL_BACKEND='tester.tests.TracingBackend')
+    @override_settings(CELERY_EMAIL_BACKEND='tests.tests.TracingBackend')
     def test_uses_correct_backend(self):
         """ It should use the backend configured in CELERY_EMAIL_BACKEND. """
         TracingBackend.called = False
@@ -113,7 +109,7 @@ class TaskTests(TestCase):
         tasks.send_email(email_to_dict(msg), backend_kwargs={})
         self.assertTrue(TracingBackend.called)
 
-    @override_settings(CELERY_EMAIL_BACKEND='tester.tests.TracingBackend')
+    @override_settings(CELERY_EMAIL_BACKEND='tests.tests.TracingBackend')
     def test_backend_parameters(self):
         """ It should pass kwargs like username and password to the backend. """
         TracingBackend.kwargs = None
@@ -121,7 +117,7 @@ class TaskTests(TestCase):
         tasks.send_email(email_to_dict(msg), backend_kwargs={'foo': 'bar'})
         self.assertEqual(TracingBackend.kwargs.get('foo'), 'bar')
 
-    @override_settings(CELERY_EMAIL_BACKEND='tester.tests.TracingBackend')
+    @override_settings(CELERY_EMAIL_BACKEND='tests.tests.TracingBackend')
     def test_backend_parameters_kwargs(self):
         """ It should pass on kwargs specified as keyword params. """
         TracingBackend.kwargs = None
@@ -165,7 +161,7 @@ class TaskErrorTests(TestCase):
         super(TaskErrorTests, self).tearDown()
         tasks.send_emails.retry = self._old_retry
 
-    @override_settings(CELERY_EMAIL_BACKEND='tester.tests.EvenErrorBackend')
+    @override_settings(CELERY_EMAIL_BACKEND='tests.tests.EvenErrorBackend')
     def test_send_multiple_emails(self):
         N = 10
         msgs = [mail.EmailMessage(subject="msg %d" % i) for i in range(N)]

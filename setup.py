@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-import sys
 import codecs
 
 from setuptools import setup, find_packages, Command
@@ -9,30 +8,7 @@ from setuptools import setup, find_packages, Command
 
 base_dir = os.path.dirname(__file__)
 
-
-class RunTests(Command):
-    description = 'Run the django test suite from the tests dir.'
-    user_options = []
-
-    def run(self):
-        this_dir = os.getcwd()
-        testproj_dir = os.path.join(this_dir, 'test_project')
-        sys.path.append(testproj_dir)
-
-        from django.core.management import execute_from_command_line
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
-        os.chdir(testproj_dir)
-        execute_from_command_line([__file__, 'test'])
-        os.chdir(this_dir)
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-
-with codecs.open(os.path.join(base_dir, 'README.rst')) as f:
+with codecs.open(os.path.join(base_dir, 'README.rst'), 'r', encoding='utf8') as f:
     long_description = f.read()
 
 about = {}
@@ -50,7 +26,7 @@ setup(
     author=about['__author__'],
     author_email=about['__email__'],
     platforms=['any'],
-    packages=find_packages(exclude=['ez_setup', 'test_project', 'test_project.*']),
+    packages=find_packages(exclude=['ez_setup', 'tests']),
     scripts=[],
     zip_safe=False,
     install_requires=[
@@ -58,7 +34,6 @@ setup(
         'celery>=2.3.0',
         'django-appconf',
     ],
-    cmdclass={'test': RunTests},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Framework :: Django',

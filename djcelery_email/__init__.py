@@ -1,1 +1,1 @@
-from __about__ import *  # noqa
+from .__about__ import *  # noqa
