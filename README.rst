@@ -5,19 +5,19 @@ django-celery-email - A Celery-backed Django Email Backend
 .. image:: https://travis-ci.org/pmclanahan/django-celery-email.svg?branch=master
     :target: https://travis-ci.org/pmclanahan/django-celery-email
 
-A `Django`_ 1.3+ email backend that uses a `Celery`_ queue for out-of-band sending
+A `Django`_ email backend that uses a `Celery`_ queue for out-of-band sending
 of the messages.
 
 .. _`Celery`: http://celeryproject.org/
 .. _`Django`: http://www.djangoproject.org/
 
 .. warning::
-	
-	This version of ``django-celery-email`` is NOT compatible with versions
-	of Celery prior to 2.2.0. If you need to use Celery 2.0.x or 2.1.x, please
-	use `django-celery-email 0.1.1`_.
 
-.. _`django-celery-email 0.1.1`: http://pypi.python.org/pypi/django-celery-email/0.1.1/
+	This version requres the following minimum versions:
+
+	* Python 2.7
+	* Django 1.7
+	* Celery 2.4
 
 Using django-celery-email
 =========================
@@ -83,6 +83,19 @@ of their delivery.
 
 Changelog
 =========
+
+1.1.3 - 2015.11.06
+------------------
+
+* support setting celery.base from string. Thanks `Matthew Jacobi`_.
+* use six for py2/3 string compatibility. Thanks `Matthew Jacobi`_.
+* pass content_subtype back in for retries. Thanks `Mark Joshua Tan`_.
+* rework how tests work, add tox, rework travis-ci matrix.
+* use six from django.utils.
+* release a universal wheel.
+
+.. _Matthew Jacobi: https://github.com/oppianmatt
+.. _Mark Joshua Tan: https://github.com/mark-tan
 
 1.1.2 - 2015.07.06
 ------------------

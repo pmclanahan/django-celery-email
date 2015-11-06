@@ -2,3 +2,5 @@ Django>=1.7
 celery>=2.3.0
 django-appconf
 flake8
+twine
+wheel

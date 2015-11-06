@@ -53,5 +53,4 @@ setup(
         'Topic :: System :: Distributed Computing',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    entry_points={},
 )
