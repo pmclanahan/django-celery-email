@@ -41,7 +41,8 @@ def email_to_dict(message):
         message_dict['alternatives'] = message.alternatives
     if message.content_subtype != EmailMessage.content_subtype:
         message_dict["content_subtype"] = message.content_subtype
-
+    if message.mixed_subtype != EmailMessage.mixed_subtype:
+        message_dict["mixed_subtype"] = message.mixed_subtype
     return message_dict
 
 
@@ -51,6 +52,11 @@ def dict_to_email(messagedict):
         del messagedict["content_subtype"]
     else:
         content_subtype = None
+    if isinstance(messagedict, dict) and "mixed_subtype" in messagedict:
+        mixed_subtype = messagedict["mixed_subtype"]
+        del messagedict["mixed_subtype"]
+    else:
+        mixed_subtype = None
     if hasattr(messagedict, 'from_email'):
         ret = messagedict
     elif 'alternatives' in messagedict:
@@ -60,4 +66,7 @@ def dict_to_email(messagedict):
     if content_subtype:
         ret.content_subtype = content_subtype
         messagedict["content_subtype"] = content_subtype  # bring back content subtype for 'retry'
+    if mixed_subtype:
+        ret.mixed_subtype = mixed_subtype
+        messagedict["mixed_subtype"] = mixed_subtype  # bring back mixed subtype for 'retry'
     return ret
