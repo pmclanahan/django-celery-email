@@ -7,7 +7,7 @@ __title__ = 'django-celery-email'
 __summary__ = 'An async Django email backend using celery'
 __uri__ = 'https://github.com/pmclanahan/django-celery-email'
 
-__version__ = '1.1.3'
+__version__ = '1.1.4'
 
 __author__ = 'Paul McLanahan'
 __email__ = 'paul@mclanahan.net'

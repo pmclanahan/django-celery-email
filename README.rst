@@ -86,15 +86,25 @@ of their delivery.
 Changelog
 =========
 
+1.1.4 - 2016.01.19
+------------------
+
+* Support sending email with embedded images. Thanks `Georg Zimmer`_.
+* Document CELERY_EMAIL_CHUNK_SIZE. Thanks `Jonas Haag`_.
+* Add exception handling to email backend connection. Thanks `Tom`_.
+
+.. _Georg Zimmer: https://github.com/georgmzimmer
+.. _Tom: https://github.com/tomleo
+
 1.1.3 - 2015.11.06
 ------------------
 
-* support setting celery.base from string. Thanks `Matthew Jacobi`_.
-* use six for py2/3 string compatibility. Thanks `Matthew Jacobi`_.
-* pass content_subtype back in for retries. Thanks `Mark Joshua Tan`_.
-* rework how tests work, add tox, rework travis-ci matrix.
-* use six from django.utils.
-* release a universal wheel.
+* Support setting celery.base from string. Thanks `Matthew Jacobi`_.
+* Use six for py2/3 string compatibility. Thanks `Matthew Jacobi`_.
+* Pass content_subtype back in for retries. Thanks `Mark Joshua Tan`_.
+* Rework how tests work, add tox, rework travis-ci matrix.
+* Use six from django.utils.
+* Release a universal wheel.
 
 .. _Matthew Jacobi: https://github.com/oppianmatt
 .. _Mark Joshua Tan: https://github.com/mark-tan
