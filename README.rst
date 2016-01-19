@@ -39,13 +39,15 @@ procedure will most likely be to get your email working using only Django, then
 change ``EMAIL_BACKEND`` to ``CELERY_EMAIL_BACKEND``, and then add the new
 ``EMAIL_BACKEND`` setting from above.
 
+Mass email are sent in chunks of size ``CELERY_EMAIL_CHUNK_SIZE`` (defaults to 10).
+
 If you need to set any of the settings (attributes) you'd normally be able to set on a
 `Celery Task`_ class had you written it yourself, you may specify them in a ``dict``
 in the ``CELERY_EMAIL_TASK_CONFIG`` setting::
 
     CELERY_EMAIL_TASK_CONFIG = {
         'queue' : 'email',
-        'rate_limit' : '50/m',
+        'rate_limit' : '50/m',  # * CELERY_EMAIL_CHUNK_SIZE (default: 10)
         ...
     }
 
