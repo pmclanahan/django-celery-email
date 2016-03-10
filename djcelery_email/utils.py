@@ -1,3 +1,6 @@
+import copy
+
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, EmailMessage
 
 
@@ -43,10 +46,22 @@ def email_to_dict(message):
         message_dict["content_subtype"] = message.content_subtype
     if message.mixed_subtype != EmailMessage.mixed_subtype:
         message_dict["mixed_subtype"] = message.mixed_subtype
+
+    if settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
+        for attr in settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
+            if hasattr(message, attr):
+                message_dict[attr] = getattr(message, attr)
+
     return message_dict
 
 
 def dict_to_email(messagedict):
+    messagedict = copy.deepcopy(messagedict)
+    extra_attrs = {}
+    if settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
+        for attr in settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
+            if attr in messagedict:
+                extra_attrs[attr] = messagedict.pop(attr)
     if isinstance(messagedict, dict) and "content_subtype" in messagedict:
         content_subtype = messagedict["content_subtype"]
         del messagedict["content_subtype"]
@@ -63,10 +78,13 @@ def dict_to_email(messagedict):
         ret = EmailMultiAlternatives(**messagedict)
     else:
         ret = EmailMessage(**messagedict)
+    for attr, val in extra_attrs.items():
+        setattr(ret, attr, val)
     if content_subtype:
         ret.content_subtype = content_subtype
         messagedict["content_subtype"] = content_subtype  # bring back content subtype for 'retry'
     if mixed_subtype:
         ret.mixed_subtype = mixed_subtype
         messagedict["mixed_subtype"] = mixed_subtype  # bring back mixed subtype for 'retry'
+
     return ret

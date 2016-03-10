@@ -8,3 +8,4 @@ class DjangoCeleryEmailAppConf(AppConf):
     TASK_CONFIG = {}
     BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     CHUNK_SIZE = 10
+    MESSAGE_EXTRA_ATTRIBUTES = None

@@ -7,7 +7,7 @@ from django.test.utils import override_settings
 
 import celery
 from djcelery_email import tasks
-from djcelery_email.utils import email_to_dict
+from djcelery_email.utils import email_to_dict, dict_to_email
 
 
 def even(n):
@@ -27,6 +27,22 @@ class TracingBackend(BaseEmailBackend):
 
     def send_messages(self, messages):
         self.__class__.called = True
+
+
+class UtilTests(TestCase):
+    @override_settings(CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES=['extra_attribute'])
+    def test_email_to_dict_extra_attrs(self):
+        msg = mail.EmailMessage()
+        msg.extra_attribute = {'name': 'val'}
+
+        self.assertEquals(email_to_dict(msg)['extra_attribute'], msg.extra_attribute)
+
+    @override_settings(CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES=['extra_attribute'])
+    def test_dict_to_email_extra_attrs(self):
+        msg_dict = email_to_dict(mail.EmailMessage())
+        msg_dict['extra_attribute'] = {'name': 'val'}
+
+        self.assertEquals(email_to_dict(dict_to_email(msg_dict)), msg_dict)
 
 
 class TaskTests(TestCase):
