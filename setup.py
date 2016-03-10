@@ -13,7 +13,7 @@ with codecs.open(os.path.join(base_dir, 'README.rst'), 'r', encoding='utf8') as 
 
 about = {}
 with open(os.path.join(base_dir, 'djcelery_email', '__about__.py')) as f:
-    exec (f.read(), about)
+    exec(f.read(), about)
 
 
 setup(
