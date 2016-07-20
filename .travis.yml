@@ -1,26 +1,14 @@
 sudo: false
 language: python
-env:
-  - TOXENV=py27-dj17-celery24
-  - TOXENV=py27-dj17-celery30
-  - TOXENV=py27-dj17-celery31
-  - TOXENV=py27-dj18-celery24
-  - TOXENV=py27-dj18-celery30
-  - TOXENV=py27-dj18-celery31
-  - TOXENV=py33-dj17-celery24
-  - TOXENV=py33-dj17-celery30
-  - TOXENV=py33-dj17-celery31
-  - TOXENV=py33-dj18-celery24
-  - TOXENV=py33-dj18-celery30
-  - TOXENV=py33-dj18-celery31
-  - TOXENV=pypy-dj17-celery24
-  - TOXENV=pypy-dj17-celery30
-  - TOXENV=pypy-dj17-celery31
-  - TOXENV=pypy-dj18-celery24
-  - TOXENV=pypy-dj18-celery30
-  - TOXENV=pypy-dj18-celery31
-  - TOXENV=py34-dj18-celery31
-  - TOXENV=py35-dj18-celery31
-  - TOXENV=flake8
-install: pip install tox
+install: travis_retry pip install tox
 script: tox
+deploy:
+  provider: pypi
+  distributions: sdist bdist_wheel
+  skip_cleanup: true
+  user: pmclanahan
+  password:
+    secure: XImyKrleMK5wSAom7c7zEQ74wp4Q0I5qT4xwfbWrmiiQeFP1p9YEcBmUXfAkJ01OOsPA5zuRzeVPKcBlyQVIwOigc6KijQOIkx6AY3aN6KCUKTbQnsiEda0/Gj0ZeAfv1tfuqQ1fZlU81Hr/lvq6Xw5N2NInJ1Cwkf0xUdKFORI=
+  on:
+    tags: true
+    repo: pmclanahan/django-celery-email
