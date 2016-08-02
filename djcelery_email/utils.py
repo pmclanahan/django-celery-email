@@ -1,4 +1,6 @@
 import copy
+import base64
+from email.mime.base import MIMEBase
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, EmailMessage
@@ -31,7 +33,7 @@ def email_to_dict(message):
                     'to': message.to,
                     'bcc': message.bcc,
                     # ignore connection
-                    'attachments': message.attachments,
+                    'attachments': [],
                     'headers': message.extra_headers,
                     'cc': message.cc}
 
@@ -46,6 +48,17 @@ def email_to_dict(message):
         message_dict["content_subtype"] = message.content_subtype
     if message.mixed_subtype != EmailMessage.mixed_subtype:
         message_dict["mixed_subtype"] = message.mixed_subtype
+
+    attachments = message.attachments
+    for attachment in attachments:
+        if isinstance(attachment, MIMEBase):
+            filename = attachment.get_filename('')
+            binary_contents = attachment.get_payload(decode=True)
+            mimetype = attachment.get_content_type()
+        else:
+            filename, binary_contents, mimetype = attachment
+        contents = base64.b64encode(binary_contents).decode('ascii')
+        message_dict['attachments'].append((filename, contents, mimetype))
 
     if settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
         for attr in settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
@@ -62,6 +75,13 @@ def dict_to_email(messagedict):
         for attr in settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
             if attr in messagedict:
                 extra_attrs[attr] = messagedict.pop(attr)
+    attachments = messagedict.pop('attachments')
+    messagedict['attachments'] = []
+    for attachment in attachments:
+        filename, contents, mimetype = attachment
+        binary_contents = base64.b64decode(contents.encode('ascii'))
+        messagedict['attachments'].append(
+            (filename, binary_contents, mimetype))
     if isinstance(messagedict, dict) and "content_subtype" in messagedict:
         content_subtype = messagedict["content_subtype"]
         del messagedict["content_subtype"]
