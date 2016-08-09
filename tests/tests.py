@@ -1,3 +1,7 @@
+import json
+import os.path
+from email.mime.image import MIMEImage
+
 from django.core import mail
 from django.core.mail.backends.base import BaseEmailBackend
 from django.core.mail.backends import locmem
@@ -43,6 +47,41 @@ class UtilTests(TestCase):
         msg_dict['extra_attribute'] = {'name': 'val'}
 
         self.assertEquals(email_to_dict(dict_to_email(msg_dict)), msg_dict)
+
+    def check_json_of_msg(self, msg):
+        serialized = json.dumps(email_to_dict(msg))
+        self.assertEqual(
+            email_to_dict(dict_to_email(json.loads(serialized))),
+            email_to_dict(msg))
+
+    def test_email_with_attachment(self):
+        file_path = os.path.join(os.path.dirname(__file__), 'image.png')
+        with open(file_path, 'rb') as file:
+            file_contents = file.read()
+        msg = mail.EmailMessage(
+            'test', 'Testing with Celery! w00t!!', 'from@example.com',
+            ['to@example.com'])
+        msg.attach('image.png', file_contents)
+        self.check_json_of_msg(msg)
+
+    def test_email_with_mime_attachment(self):
+        file_path = os.path.join(os.path.dirname(__file__), 'image.png')
+        with open(file_path, 'rb') as file:
+            file_contents = file.read()
+        mimg = MIMEImage(file_contents)
+        msg = mail.EmailMessage(
+            'test', 'Testing with Celery! w00t!!', 'from@example.com',
+            ['to@example.com'])
+        msg.attach(mimg)
+        self.check_json_of_msg(msg)
+
+    def test_email_with_attachment_from_file(self):
+        file_path = os.path.join(os.path.dirname(__file__), 'image.png')
+        msg = mail.EmailMessage(
+            'test', 'Testing with Celery! w00t!!', 'from@example.com',
+            ['to@example.com'])
+        msg.attach_file(file_path)
+        self.check_json_of_msg(msg)
 
 
 class TaskTests(TestCase):
