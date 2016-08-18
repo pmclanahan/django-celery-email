@@ -76,9 +76,13 @@ handled by your Celery workers::
 ``results`` will be a list of celery `AsyncResult`_ objects that you may ignore, or use to check the
 status of the email delivery task, or even wait for it to complete if want. You have to enable a result
 backend and set ``ignore_result`` to ``False`` in ``CELERY_EMAIL_TASK_CONFIG`` if you want to use these.
+You should also set ``CELERY_EMAIL_CHUNK_SIZE = 1`` in settings if you are concerned about task status
+and results.
+
 See the `Celery docs`_ for more info.
 
-``len(results)`` will be the number of emails you attempted to send, and is in no way a reflection on the success or failure 
+
+``len(results)`` will be the number of emails you attempted to send divided by CELERY_EMAIL_CHUNK_SIZE, and is in no way a reflection on the success or failure
 of their delivery.
 
 .. _`Celery Task`: http://celery.readthedocs.org/en/latest/userguide/tasks.html#basics
@@ -87,6 +91,12 @@ of their delivery.
 
 Changelog
 =========
+
+1.1.5 - 2016.07.20
+------------------
+* Support extra email attributes via CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES setting
+* Updated version requirements in README
+
 
 1.1.4 - 2016.01.19
 ------------------
