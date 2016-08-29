@@ -1,6 +1,9 @@
 import copy
 import base64
 from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.audio import MIMEAudio
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, EmailMessage
