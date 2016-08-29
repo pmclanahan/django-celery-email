@@ -55,16 +55,16 @@ def email_to_dict(message):
             filename = attachment.get_filename('')
             binary_contents = attachment.get_payload(decode=True)
             mimetype = attachment.get_content_type()
+            mime = True
         else:
             filename, binary_contents, mimetype = attachment
+            mime = False
         contents = base64.b64encode(binary_contents).decode('ascii')
-        message_dict['attachments'].append((filename, contents, mimetype))
-
+        message_dict['attachments'].append((filename, contents, mimetype, mime))
     if settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
         for attr in settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
             if hasattr(message, attr):
                 message_dict[attr] = getattr(message, attr)
-
     return message_dict
 
 
@@ -75,13 +75,9 @@ def dict_to_email(messagedict):
         for attr in settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
             if attr in messagedict:
                 extra_attrs[attr] = messagedict.pop(attr)
+
     attachments = messagedict.pop('attachments')
-    messagedict['attachments'] = []
-    for attachment in attachments:
-        filename, contents, mimetype = attachment
-        binary_contents = base64.b64decode(contents.encode('ascii'))
-        messagedict['attachments'].append(
-            (filename, binary_contents, mimetype))
+
     if isinstance(messagedict, dict) and "content_subtype" in messagedict:
         content_subtype = messagedict["content_subtype"]
         del messagedict["content_subtype"]
@@ -106,5 +102,24 @@ def dict_to_email(messagedict):
     if mixed_subtype:
         ret.mixed_subtype = mixed_subtype
         messagedict["mixed_subtype"] = mixed_subtype  # bring back mixed subtype for 'retry'
+
+    for attachment in attachments:
+        filename, contents, mimetype, mime = attachment
+        binary_contents = base64.b64decode(contents.encode('ascii'))
+        if mime:
+            maintype, subtype = mimetype.split('/', 1)
+            if maintype == 'text':
+                attch = MIMEText(binary_contents, _subtype=subtype)
+            elif maintype == 'image':
+                attch = MIMEImage(binary_contents, _subtype=subtype)
+            elif maintype == 'audio':
+                attch = MIMEAudio(binary_contents, _subtype=subtype)
+            else:
+                attch = MIMEBase(binary_contents, subtype)
+            attch.add_header('Content-Disposition', 'attachment; filename="%s"' % filename)
+            attch.add_header('Content-ID', '<%s>' % filename)
+            ret.attach(attch)
+        else:
+            ret.attach(filename, binary_contents, mimetype)
 
     return ret
