@@ -324,11 +324,11 @@ class IntegrationTests(TestCase):
     def setUp(self):
         super(IntegrationTests, self).setUp()
         # TODO: replace with 'unittest.mock' at some point
-        celery.current_app.conf.CELERY_ALWAYS_EAGER = True
+        celery.current_app.conf.task_always_eager = True
 
     def tearDown(self):
         super(IntegrationTests, self).tearDown()
-        celery.current_app.conf.CELERY_ALWAYS_EAGER = False
+        celery.current_app.conf.task_always_eager = False
 
     def test_sending_email(self):
         [result] = mail.send_mail('test', 'Testing with Celery! w00t!!', 'from@example.com',

@@ -30,8 +30,8 @@ setup(
     scripts=[],
     zip_safe=False,
     install_requires=[
-        'django>=1.7',
-        'celery>=2.3.0',
+        'django>=1.8',
+        'celery>=4.0',
         'django-appconf',
     ],
     classifiers=[
@@ -42,9 +42,9 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: POSIX',

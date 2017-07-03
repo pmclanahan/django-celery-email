@@ -15,11 +15,11 @@ of the messages.
 
 .. warning::
 
-	This version requres the following minimum versions:
+	This version requires the following versions:
 
-	* Python 2.7 and Python >= 3.3
-	* Django >= 1.7
-	* Celery 2.4
+	* Python 2.7 and Python >= 3.4
+	* Django 1.8, 1.10, 1.11
+	* Celery 4.0
 
 Using django-celery-email
 =========================
@@ -91,6 +91,12 @@ of their delivery.
 
 Changelog
 =========
+
+2.0
+---
+* Support for Django 1.11 and Celery 4.0
+* Dropped support for Celery 2.x and 3.x
+* Dropped support for Python 3.3
 
 1.1.5 - 2016.07.20
 ------------------
