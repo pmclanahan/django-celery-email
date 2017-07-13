@@ -92,8 +92,8 @@ of their delivery.
 Changelog
 =========
 
-2.0
----
+2.0 - 2017.07.10
+----------------
 * Support for Django 1.11 and Celery 4.0
 * Dropped support for Celery 2.x and 3.x
 * Dropped support for Python 3.3
