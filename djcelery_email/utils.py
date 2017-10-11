@@ -55,10 +55,11 @@ def email_to_dict(message):
             filename = attachment.get_filename('')
             binary_contents = attachment.get_payload(decode=True)
             mimetype = attachment.get_content_type()
+            headers = attachment._headers
         else:
-            filename, binary_contents, mimetype = attachment
+            filename, binary_contents, mimetype, headers = attachment
         contents = base64.b64encode(binary_contents).decode('ascii')
-        message_dict['attachments'].append((filename, contents, mimetype))
+        message_dict['attachments'].append((filename, contents, mimetype, headers))
 
     if settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
         for attr in settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
@@ -75,13 +76,9 @@ def dict_to_email(messagedict):
         for attr in settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
             if attr in messagedict:
                 extra_attrs[attr] = messagedict.pop(attr)
+
     attachments = messagedict.pop('attachments')
-    messagedict['attachments'] = []
-    for attachment in attachments:
-        filename, contents, mimetype = attachment
-        binary_contents = base64.b64decode(contents.encode('ascii'))
-        messagedict['attachments'].append(
-            (filename, binary_contents, mimetype))
+
     if isinstance(messagedict, dict) and "content_subtype" in messagedict:
         content_subtype = messagedict["content_subtype"]
         del messagedict["content_subtype"]
@@ -92,12 +89,48 @@ def dict_to_email(messagedict):
         del messagedict["mixed_subtype"]
     else:
         mixed_subtype = None
+
     if hasattr(messagedict, 'from_email'):
         ret = messagedict
     elif 'alternatives' in messagedict:
         ret = EmailMultiAlternatives(**messagedict)
     else:
         ret = EmailMessage(**messagedict)
+
+    if isinstance(ret, EmailMessage):
+        # Properly build attachments with headers
+        for attachment in attachments:
+
+            # Extract attachment params
+            attachment_payload = attachment[1]
+            attachment_type, attachment_subtype = attachment[2].split('/')
+            attachment_headers = attachment[3]
+
+            # Create attachment object
+            elem = MIMEBase(
+                attachment_type,
+                attachment_subtype
+            )
+
+            elem.set_payload(attachment_payload)
+
+            # Assign attachment headers
+            for header in attachment_headers:
+                header, header_value = header
+                try:
+                    elem.replace_header(header, header_value)
+                except KeyError:
+                    elem.add_header(header, header_value)
+
+            ret.attach(elem)
+    else:
+        messagedict['attachments'] = []
+        for attachment in attachments:
+            filename, contents, mimetype, headers = attachment
+            binary_contents = base64.b64decode(contents.encode('ascii'))
+            messagedict['attachments'].append(
+                (filename, binary_contents, mimetype))
+
     for attr, val in extra_attrs.items():
         setattr(ret, attr, val)
     if content_subtype:
