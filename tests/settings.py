@@ -9,6 +9,7 @@ DATABASES = {
 INSTALLED_APPS = (
     'djcelery_email',
     'appconf',
+    'django_celery_results',
 )
 
 SECRET_KEY = 'unique snowflake'
@@ -23,3 +24,4 @@ CELERY_EMAIL_TASK_CONFIG = {
     'delivery_mode': 1,  # non persistent
     'rate_limit': '50/m',  # 50 chunks per minute
 }
+CELERY_RESULT_BACKEND = 'django-db'
