@@ -102,17 +102,19 @@ def dict_to_email(messagedict):
     else:
         ret = EmailMessage(**messagedict)
 
-        print(messagedict)
-
     if isinstance(ret, EmailMessage):
         # Properly build attachments with headers
         for index, attachment in enumerate(attachments):
-            print(attachment)
             # Extract attachment params
             attachment_filename = attachment[0]
             attachment_mime = attachment[2]
             attachment_payload = base64.b64decode(attachment[1].encode('ascii'))
-            attachment_type, attachment_subtype = attachment[2].split('/')
+
+            if attachment_mime is None:
+                attachment_type = 'application'
+                attachment_subtype = 'octet-stream'
+            else:
+                attachment_type, attachment_subtype = attachment_mime.split('/')
 
             if str(index) in attachment_headers:
 
