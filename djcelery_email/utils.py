@@ -34,6 +34,7 @@ def email_to_dict(message):
                     'bcc': message.bcc,
                     # ignore connection
                     'attachments': [],
+                    'attachment_headers': {},
                     'headers': message.extra_headers,
                     'cc': message.cc}
 
@@ -50,16 +51,19 @@ def email_to_dict(message):
         message_dict["mixed_subtype"] = message.mixed_subtype
 
     attachments = message.attachments
-    for attachment in attachments:
+    for idx, attachment in enumerate(attachments):
         if isinstance(attachment, MIMEBase):
             filename = attachment.get_filename('')
             binary_contents = attachment.get_payload(decode=True)
             mimetype = attachment.get_content_type()
-            headers = attachment._headers
+
+            message_dict['attachment_headers'][idx] = \
+                attachment._headers
         else:
-            filename, binary_contents, mimetype, headers = attachment
+            filename, binary_contents, mimetype = attachment
         contents = base64.b64encode(binary_contents).decode('ascii')
-        message_dict['attachments'].append((filename, contents, mimetype, headers))
+
+        message_dict['attachments'].append((filename, contents, mimetype))
 
     if settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
         for attr in settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
@@ -78,6 +82,7 @@ def dict_to_email(messagedict):
                 extra_attrs[attr] = messagedict.pop(attr)
 
     attachments = messagedict.pop('attachments')
+    attachment_headers = messagedict.pop('attachment_headers')
 
     if isinstance(messagedict, dict) and "content_subtype" in messagedict:
         content_subtype = messagedict["content_subtype"]
@@ -99,28 +104,27 @@ def dict_to_email(messagedict):
 
     if isinstance(ret, EmailMessage):
         # Properly build attachments with headers
-        for attachment in attachments:
+        for index, attachment in enumerate(attachments):
 
             # Extract attachment params
             attachment_payload = attachment[1]
             attachment_type, attachment_subtype = attachment[2].split('/')
-            attachment_headers = attachment[3]
 
             # Create attachment object
             elem = MIMEBase(
                 attachment_type,
                 attachment_subtype
             )
-
             elem.set_payload(attachment_payload)
 
             # Assign attachment headers
-            for header in attachment_headers:
-                header, header_value = header
-                try:
-                    elem.replace_header(header, header_value)
-                except KeyError:
-                    elem.add_header(header, header_value)
+            if index in attachment_headers:
+                for header in attachment_headers[index]:
+                    header, header_value = header
+                    try:
+                        elem.replace_header(header, header_value)
+                    except KeyError:
+                        elem.add_header(header, header_value)
 
             ret.attach(elem)
     else:
