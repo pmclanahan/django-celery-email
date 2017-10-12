@@ -57,7 +57,7 @@ def email_to_dict(message):
             binary_contents = attachment.get_payload(decode=True)
             mimetype = attachment.get_content_type()
 
-            message_dict['attachment_headers'][idx] = \
+            message_dict['attachment_headers'][str(idx)] = \
                 attachment._headers
         else:
             filename, binary_contents, mimetype = attachment
@@ -105,30 +105,43 @@ def dict_to_email(messagedict):
     if isinstance(ret, EmailMessage):
         # Properly build attachments with headers
         for index, attachment in enumerate(attachments):
-
             # Extract attachment params
-            attachment_payload = attachment[1]
+            attachment_filename = attachment[0]
+            attachment_mime = attachment[2]
+            attachment_payload = base64.b64decode(attachment[1].encode('ascii'))
             attachment_type, attachment_subtype = attachment[2].split('/')
 
-            # Create attachment object
-            elem = MIMEBase(
-                attachment_type,
-                attachment_subtype
-            )
-            elem.set_payload(attachment_payload)
+            if str(index) in attachment_headers:
 
-            # Assign attachment headers
-            if index in attachment_headers:
-                for header in attachment_headers[index]:
+                # Create attachment object
+                mime = MIMEBase(attachment_type, attachment_subtype)
+                for header_key, header_value in attachment_headers[str(index)]:
+                    try:
+                        mime.replace_header(header_key, header_value)
+                    except KeyError:
+                        mime.add_header(header_key, header_value)
+
+                mime.set_payload(
+                    base64.b64encode(attachment_payload).decode('ascii')
+                )
+
+                # Assign attachment headers
+                for header in attachment_headers[str(index)]:
                     header, header_value = header
                     try:
-                        elem.replace_header(header, header_value)
+                        mime.replace_header(header, header_value)
                     except KeyError:
-                        elem.add_header(header, header_value)
+                        mime.add_header(header, header_value)
 
-            ret.attach(elem)
+                try:
+                    mime.replace_header('Content-Transfer-Encoding', 'base64')
+                except KeyError:
+                    mime.add_header('Content-Transfer-Encoding', 'base64')
+
+                ret.attach(mime)
+            else:
+                ret.attach(attachment_filename, attachment_payload, attachment_mime)
     else:
-        messagedict['attachments'] = []
         for attachment in attachments:
             filename, contents, mimetype, headers = attachment
             binary_contents = base64.b64decode(contents.encode('ascii'))
