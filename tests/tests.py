@@ -348,6 +348,17 @@ class IntegrationTests(TestCase):
         self.assertEqual(mail.outbox[0].subject, 'test')
         self.assertEqual(mail.outbox[0].alternatives, [(html, 'text/html')])
 
+    def test_sending_mail_with_text_attachment(self):
+        msg = mail.EmailMessage(
+            'test', 'Testing with Celery! w00t!!', 'from@example.com',
+            ['to@example.com'])
+        msg.attach('image.png', 'csv content', 'text/csv')
+        [result] = msg.send()
+        self.assertEqual(result.get(), 1)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'test')
+        self.assertEqual(mail.outbox[0].content_subtype, "plain")
+
     def test_sending_html_only_email(self):
         msg = mail.EmailMessage('test', 'Testing <b>with Celery! w00t!!</b>', 'from@example.com',
                                 ['to@example.com'])
