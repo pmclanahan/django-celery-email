@@ -92,6 +92,12 @@ of their delivery.
 Changelog
 =========
 
+2.0.1 - 2018.18.27
+------------------
+* Fix bug preventing sending text/* encoded mime attachments. Thanks `Cesar Canassa`_.
+
+.. _Cesar Canassa: https://github.com/canassa
+
 2.0 - 2017.07.10
 ----------------
 * Support for Django 1.11 and Celery 4.0

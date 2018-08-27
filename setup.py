@@ -3,7 +3,7 @@
 import os
 import codecs
 
-from setuptools import setup, find_packages, Command
+from setuptools import setup, find_packages
 
 
 base_dir = os.path.dirname(__file__)
