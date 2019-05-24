@@ -73,14 +73,21 @@ def email_to_dict(message):
 
 
 def dict_to_email(messagedict):
-    messagedict = copy.deepcopy(messagedict)
-    extra_attrs = {}
+    message_kwargs = copy.deepcopy(messagedict)  # prevents missing items on retry
+
+    # remove items from message_kwargs until only valid EmailMessage/EmailMultiAlternatives kwargs are left
+    # and save the removed items to be used as EmailMessage/EmailMultiAlternatives attributes later
+    message_attributes = ['content_subtype', 'mixed_subtype']
     if settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
-        for attr in settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
-            if attr in messagedict:
-                extra_attrs[attr] = messagedict.pop(attr)
-    attachments = messagedict.pop('attachments')
-    messagedict['attachments'] = []
+        message_attributes.extend(settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES)
+    attributes_to_copy = {}
+    for attr in message_attributes:
+        if attr in message_kwargs:
+            attributes_to_copy[attr] = message_kwargs.pop(attr)
+
+    # remove attachments from message_kwargs then reinsert after base64 decoding
+    attachments = message_kwargs.pop('attachments')
+    message_kwargs['attachments'] = []
     for attachment in attachments:
         filename, contents, mimetype = attachment
         contents = base64.b64decode(contents.encode('ascii'))
@@ -89,30 +96,15 @@ def dict_to_email(messagedict):
         if mimetype and mimetype.startswith('text/'):
             contents = contents.decode()
 
-        messagedict['attachments'].append((filename, contents, mimetype))
-    if isinstance(messagedict, dict) and "content_subtype" in messagedict:
-        content_subtype = messagedict["content_subtype"]
-        del messagedict["content_subtype"]
-    else:
-        content_subtype = None
-    if isinstance(messagedict, dict) and "mixed_subtype" in messagedict:
-        mixed_subtype = messagedict["mixed_subtype"]
-        del messagedict["mixed_subtype"]
-    else:
-        mixed_subtype = None
-    if hasattr(messagedict, 'from_email'):
-        ret = messagedict
-    elif 'alternatives' in messagedict:
-        ret = EmailMultiAlternatives(**messagedict)
-    else:
-        ret = EmailMessage(**messagedict)
-    for attr, val in extra_attrs.items():
-        setattr(ret, attr, val)
-    if content_subtype:
-        ret.content_subtype = content_subtype
-        messagedict["content_subtype"] = content_subtype  # bring back content subtype for 'retry'
-    if mixed_subtype:
-        ret.mixed_subtype = mixed_subtype
-        messagedict["mixed_subtype"] = mixed_subtype  # bring back mixed subtype for 'retry'
+        message_kwargs['attachments'].append((filename, contents, mimetype))
 
-    return ret
+    if 'alternatives' in message_kwargs:
+        message = EmailMultiAlternatives(**message_kwargs)
+    else:
+        message = EmailMessage(**message_kwargs)
+
+    # set attributes on message with items removed from message_kwargs earlier
+    for attr, val in attributes_to_copy.items():
+        setattr(message, attr, val)
+
+    return message
