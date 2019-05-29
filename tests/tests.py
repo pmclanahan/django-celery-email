@@ -346,7 +346,8 @@ class IntegrationTests(TestCase):
         self.assertEqual(result.get(), 1)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'test')
-        self.assertEqual(mail.outbox[0].alternatives, [(html, 'text/html')])
+        self.assertEqual(len(mail.outbox[0].alternatives), 1)
+        self.assertEqual(list(mail.outbox[0].alternatives[0]), [html, 'text/html'])
 
     def test_sending_mail_with_text_attachment(self):
         msg = mail.EmailMessage(
