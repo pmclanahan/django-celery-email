@@ -17,7 +17,7 @@ of the messages.
 
 	This version requires the following versions:
 
-	* Python 2.7 and Python >= 3.4
+	* Python 2.7 and Python >= 3.5
 	* Django 1.11, 2.1, and 2.2
 	* Celery 4.0
 
