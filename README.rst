@@ -92,6 +92,16 @@ of their delivery.
 Changelog
 =========
 
+2.0.2 - 2019.05.29
+------------------
+
+* Reduce memory usage by running email_to_dict on chunks. Thanks `Paul Brown`_.
+* Simplify dict_to_email for readability and efficiency. Thanks `Paul Brown`_.
+* Update test matrix for supported versions of Django, Celery and Python. Thanks `James`_.
+
+.. _Paul Brown: https://github.com/pawl
+.. _James: https://github.com/jmsmkn
+
 2.0.1 - 2018.18.27
 ------------------
 * Fix bug preventing sending text/* encoded mime attachments. Thanks `Cesar Canassa`_.
