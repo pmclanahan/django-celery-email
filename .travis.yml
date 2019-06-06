@@ -6,7 +6,7 @@ python:
   - "3.5"
   - "3.6"
   - "3.7"
-install: travis_retry pip install tox tox-travis
+install: travis_retry pip install tox tox-travis codecov
 script: tox
 deploy:
   provider: pypi
@@ -19,3 +19,6 @@ deploy:
     tags: true
     repo: pmclanahan/django-celery-email
     python: '3.6'
+
+after_success:
+  - codecov
