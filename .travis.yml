@@ -6,7 +6,7 @@ python:
   - "3.5"
   - "3.6"
   - "3.7"
-install: travis_retry pip install tox tox-travis codecov
+install: travis_retry pip install tox tox-travis
 script: tox
 deploy:
   provider: pypi
