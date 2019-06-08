@@ -19,3 +19,6 @@ deploy:
     tags: true
     repo: pmclanahan/django-celery-email
     python: '3.6'
+
+after_success:
+  - codecov
