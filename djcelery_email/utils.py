@@ -4,7 +4,6 @@ from email.mime.base import MIMEBase
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, EmailMessage
-from django.utils import six
 
 
 def chunked(iterator, chunksize):
@@ -59,7 +58,7 @@ def email_to_dict(message):
         else:
             filename, binary_contents, mimetype = attachment
             # For a mimetype starting with text/, content is expected to be a string.
-            if six.PY3 and isinstance(binary_contents, str):
+            if isinstance(binary_contents, str):
                 binary_contents = binary_contents.encode()
         contents = base64.b64encode(binary_contents).decode('ascii')
         message_dict['attachments'].append((filename, contents, mimetype))
