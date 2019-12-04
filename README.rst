@@ -17,8 +17,8 @@ of the messages.
 
 	This version requires the following versions:
 
-	* Python 2.7 and Python >= 3.5
-	* Django 1.11, 2.1, and 2.2
+	* Python >= 3.5
+	* Django 2.1, 2.2, and 3.0
 	* Celery 4.0
 
 Using django-celery-email
