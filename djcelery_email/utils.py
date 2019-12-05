@@ -35,12 +35,8 @@ def email_to_dict(message):
                     # ignore connection
                     'attachments': [],
                     'headers': message.extra_headers,
-                    'cc': message.cc}
-
-    # Django 1.8 support
-    # https://docs.djangoproject.com/en/1.8/topics/email/#django.core.mail.EmailMessage
-    if hasattr(message, 'reply_to'):
-        message_dict['reply_to'] = message.reply_to
+                    'cc': message.cc,
+                    'reply_to': message.reply_to}
 
     if hasattr(message, 'alternatives'):
         message_dict['alternatives'] = message.alternatives
