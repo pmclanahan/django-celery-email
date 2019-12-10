@@ -39,14 +39,14 @@ class UtilTests(TestCase):
         msg = mail.EmailMessage()
         msg.extra_attribute = {'name': 'val'}
 
-        self.assertEquals(email_to_dict(msg)['extra_attribute'], msg.extra_attribute)
+        self.assertEqual(email_to_dict(msg)['extra_attribute'], msg.extra_attribute)
 
     @override_settings(CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES=['extra_attribute'])
     def test_dict_to_email_extra_attrs(self):
         msg_dict = email_to_dict(mail.EmailMessage())
         msg_dict['extra_attribute'] = {'name': 'val'}
 
-        self.assertEquals(email_to_dict(dict_to_email(msg_dict)), msg_dict)
+        self.assertEqual(email_to_dict(dict_to_email(msg_dict)), msg_dict)
 
     def check_json_of_msg(self, msg):
         serialized = json.dumps(email_to_dict(msg))
