@@ -30,7 +30,7 @@ setup(
     scripts=[],
     zip_safe=False,
     install_requires=[
-        'django>=2.0',
+        'django>=2.1',
         'celery>=4.0',
         'django-appconf',
     ],
