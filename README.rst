@@ -92,6 +92,14 @@ of their delivery.
 Changelog
 =========
 
+3.0.0 - 2019.12.10
+------------------
+
+* Support for Django 3.0
+* Support for Python 3.8
+* Droppped support for Django 1.x, Django 2.0 and Django 2.1
+* Droppped support for Python 2.7
+
 2.0.2 - 2019.05.29
 ------------------
 
