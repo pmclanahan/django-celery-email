@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import os
 import codecs
 
@@ -30,7 +29,7 @@ setup(
     scripts=[],
     zip_safe=False,
     install_requires=[
-        'django>=2.1',
+        'django>=2.2',
         'celery>=4.0',
         'django-appconf',
     ],
