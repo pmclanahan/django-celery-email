@@ -1,4 +1,4 @@
-Django>=2.1
+Django>=2.2
 celery>=4.0
 django-appconf
 flake8
