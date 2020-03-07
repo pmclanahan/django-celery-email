@@ -169,7 +169,7 @@ Changelog
 ------------------
 
 * New PyPI release rolling up 1.0.5 changes and some cleanup.
-* More backward compatability in task. Will still accept message objects and lists of message objects.
+* More backward compatibility in task. Will still accept message objects and lists of message objects.
 * Thanks again to everyone who contributed to 1.0.5.
 
 1.0.5 - 2014.08.24
