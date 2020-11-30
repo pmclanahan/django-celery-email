@@ -102,7 +102,7 @@ def dict_to_email(messagedict):
             contents = contents.decode()
 
         if headers is None:
-            message.attach(filename, contents, filename)
+            message.attach(filename, contents, mimetype)
         else:
             mime_attachment = message._create_attachment(filename, contents, mimetype)
             for name, value in headers.items():
