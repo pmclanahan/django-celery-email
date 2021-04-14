@@ -18,7 +18,7 @@ of the messages.
 	This version requires the following versions:
 
 	* Python >= 3.5
-	* Django 2.2, and 3.0
+	* Django 2.2, 3.0, 3.1 and 3.2
 	* Celery 4.0
 
 Using django-celery-email
@@ -91,6 +91,12 @@ of their delivery.
 
 Changelog
 =========
+
+3.1.0 - 2021.04.14
+------------------
+
+* Support for Django 3.1, Django 3.2
+* Support for Python 3.9
 
 3.0.0 - 2019.12.10
 ------------------
