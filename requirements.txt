@@ -1,5 +1,5 @@
 Django>=2.2
-celery>=4.0
+celery>=4.0,<5.0
 django-appconf
 flake8
 twine
