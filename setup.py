@@ -28,6 +28,7 @@ setup(
     packages=find_packages(exclude=['ez_setup', 'tests']),
     scripts=[],
     zip_safe=False,
+    python_requires='>=3.7',
     install_requires=[
         'django>=2.2',
         'celery>=4.0',
@@ -39,8 +40,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Intended Audience :: Developers',
