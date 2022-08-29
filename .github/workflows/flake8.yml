@@ -1,0 +1,30 @@
+name: Run flake8
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  flake8-lint:
+    name: flake8
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+          architecture: "x64"
+
+      - name: Install flake8
+        run: pip install flake8
+
+      - name: run flake8
+        run: flake8 . --max-line-length 120 --statistics --count --exclude  ".tox,.venv,.env,.git,__pycache__,docs,old,build,dist"
