@@ -47,7 +47,10 @@ def send_emails(messages, backend_kwargs=None, **kwargs):
         try:
             sent = conn.send_messages([dict_to_email(message)])
             if sent is not None:
-                messages_sent += sent
+                if isinstance(sent, list):
+                    messages_sent += len(sent)
+                else:
+                    messages_sent += sent
             logger.debug("Successfully sent email message to %r.", message['to'])
         except Exception as e:
             # Not expecting any specific kind of exception here because it
