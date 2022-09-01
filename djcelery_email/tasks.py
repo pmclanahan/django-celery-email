@@ -20,8 +20,8 @@ if 'base' in TASK_CONFIG and isinstance(TASK_CONFIG['base'], str):
     TASK_CONFIG['base'] = import_string(TASK_CONFIG['base'])
 
 
-@shared_task(**TASK_CONFIG)
-def send_emails(messages, backend_kwargs=None, **kwargs):
+@shared_task(bind=True, **TASK_CONFIG)
+def send_emails(self, messages, backend_kwargs=None, **kwargs):
     # backward compat: handle **kwargs and missing backend_kwargs
     combined_kwargs = {}
     if backend_kwargs is not None:
@@ -38,8 +38,9 @@ def send_emails(messages, backend_kwargs=None, **kwargs):
     conn = get_connection(backend=settings.CELERY_EMAIL_BACKEND, **combined_kwargs)
     try:
         conn.open()
-    except Exception:
-        logger.exception("Cannot reach CELERY_EMAIL_BACKEND %s", settings.CELERY_EMAIL_BACKEND)
+    except Exception as e:
+        logger.warning("Cannot reach CELERY_EMAIL_BACKEND %s", settings.CELERY_EMAIL_BACKEND)
+        self.retry(exc=e, countdown=2 ** self.request.retries)
 
     messages_sent = 0
 
