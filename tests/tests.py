@@ -75,6 +75,18 @@ class UtilTests(TestCase):
         msg.attach(mimg)
         self.check_json_of_msg(msg)
 
+    def test_email_with_mime_attachment_headers(self):
+        file_path = os.path.join(os.path.dirname(__file__), 'image.png')
+        with open(file_path, 'rb') as file:
+            file_contents = file.read()
+        mimg = MIMEImage(file_contents)
+        mimg.add_header('X-Attachment-Id', 'attachment_id_test')
+        msg = mail.EmailMessage(
+            'test', 'Testing with Celery! w00t!!', 'from@example.com',
+            ['to@example.com'])
+        msg.attach(mimg)
+        self.check_json_of_msg(msg)
+
     def test_email_with_attachment_from_file(self):
         file_path = os.path.join(os.path.dirname(__file__), 'image.png')
         msg = mail.EmailMessage(

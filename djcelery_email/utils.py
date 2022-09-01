@@ -51,13 +51,16 @@ def email_to_dict(message):
             filename = attachment.get_filename('')
             binary_contents = attachment.get_payload(decode=True)
             mimetype = attachment.get_content_type()
+            headers = dict(attachment._headers)
+            headers.pop('Content-Type', None)
         else:
             filename, binary_contents, mimetype = attachment
             # For a mimetype starting with text/, content is expected to be a string.
+            headers = None
             if isinstance(binary_contents, str):
                 binary_contents = binary_contents.encode()
         contents = base64.b64encode(binary_contents).decode('ascii')
-        message_dict['attachments'].append((filename, contents, mimetype))
+        message_dict['attachments'].append((filename, contents, mimetype, headers))
 
     if settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
         for attr in settings.CELERY_EMAIL_MESSAGE_EXTRA_ATTRIBUTES:
@@ -82,21 +85,29 @@ def dict_to_email(messagedict):
 
     # remove attachments from message_kwargs then reinsert after base64 decoding
     attachments = message_kwargs.pop('attachments')
-    message_kwargs['attachments'] = []
+
+    if 'alternatives' in message_kwargs:
+        message = EmailMultiAlternatives(**message_kwargs)
+    else:
+        message = EmailMessage(**message_kwargs)
+
     for attachment in attachments:
-        filename, contents, mimetype = attachment
+        filename, contents, mimetype = attachment[:3]
+        # Headers are optional to support queued messages from previous versions
+        headers = attachment[3] if len(attachment) >= 3 else {}
         contents = base64.b64decode(contents.encode('ascii'))
 
         # For a mimetype starting with text/, content is expected to be a string.
         if mimetype and mimetype.startswith('text/'):
             contents = contents.decode()
 
-        message_kwargs['attachments'].append((filename, contents, mimetype))
-
-    if 'alternatives' in message_kwargs:
-        message = EmailMultiAlternatives(**message_kwargs)
-    else:
-        message = EmailMessage(**message_kwargs)
+        if headers is None:
+            message.attach(filename, contents, mimetype)
+        else:
+            mime_attachment = message._create_attachment(filename, contents, mimetype)
+            for name, value in headers.items():
+                mime_attachment.add_header(name, value)
+            message.attach(mime_attachment)
 
     # set attributes on message with items removed from message_kwargs earlier
     for attr, val in attributes_to_copy.items():
