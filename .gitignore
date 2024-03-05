@@ -39,3 +39,6 @@ nosetests.xml
 .venv/
 env/
 venv/
+
+# IDE configs
+.vscode/

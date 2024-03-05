@@ -2,8 +2,6 @@
 django-celery-email - A Celery-backed Django Email Backend
 ==========================================================
 
-.. image:: https://img.shields.io/travis/pmclanahan/django-celery-email/master.svg
-    :target: https://travis-ci.org/pmclanahan/django-celery-email
 .. image:: https://img.shields.io/pypi/v/django-celery-email.svg
     :target: https://pypi.python.org/pypi/django-celery-email
 
@@ -17,9 +15,9 @@ of the messages.
 
 	This version requires the following versions:
 
-	* Python >= 3.7
-	* Django 2.2, 3.0, 3.1, 3.2
-	* Celery >= 4.0
+	* Python >= 3.8
+	* Django 3.0, 3.1, 3.2, 4.0, 4.1, 4.2, 5.0
+	* Celery >= 5.0 (note that using Python >= 3.11 requires Celery >= 5.3)
 
 Using django-celery-email
 =========================
@@ -91,6 +89,16 @@ of their delivery.
 
 Changelog
 =========
+
+4.0.0 - Unreleased
+------------------
+
+* Support for Django 4.0+
+* Support for Python 3.10+
+* Support for Celery 5.2+
+* Drop support for Django 2.2
+* Drop support for Celery 4
+* Drop support for Python 3.7
 
 3.1.0 - Unreleased
 ------------------
